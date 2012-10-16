@@ -1,0 +1,27 @@
+{
+  "name": "Grey Tab",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "A small but growing collection of neat tricks for debugging force.com applications.",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.salesforce.com/*", "https://*.force.com/*"],
+      "js": ["pageinfo.js"]
+    }
+  ],
+  "permissions": [
+    "https://*.salesforce.com/",
+    "https://*.force.com/",
+    "tabs",
+    "background",
+    "notifications",
+    "contextMenus"
+  ]
+}
