@@ -1,3 +1,4 @@
+
 //isolate from global scope
 (function() {
 	/**
@@ -18,8 +19,20 @@
 		//failure; no such key
 		return null;
 	}
-
-
+    
+    /**
+     * Takes any of the various forms of SFDC hostnames and spits out a "standard" format
+     * @return {String}
+     */
+    var cleanupHost = function(hostname){
+        var result = "";
+        var hostname = hostname.replace("visual.force.com","salesforce.com");
+        var hostparts = hostname.split("\.");
+        if(hostparts[hostparts.length-3] === "my") //as in my.salesforce.com
+            result = hostparts[hostparts.length-4]+"."+hostparts[hostparts.length-3]+".";
+        result = result+hostparts[hostparts.length-2]+"."+hostparts[hostparts.length-1];
+        return result;
+    }  
 
 	/**
 	 * Get URL parameters
@@ -68,7 +81,8 @@
 		sessionId     : getCookie('sid'),
 		orgId         : getCookie('oid'),
 		userId        : '005E' + getCookie('sid_Client').substring(0,11),
-		sfhost        : window.location.host.toString()
+		sfhost        : cleanupHost(window.location.host.toString()),
+		sid_client    : getCookie('sid_client')
 	};
 
 	chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
