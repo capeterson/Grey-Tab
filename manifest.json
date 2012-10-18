@@ -17,11 +17,12 @@
     }
   ],
   "permissions": [
-    "https://*.salesforce.com/",
-    "https://*.force.com/",
+    "*://*.salesforce.com/",
+    "*://*.force.com/",
     "tabs",
     "background",
     "notifications",
-    "contextMenus"
+    "contextMenus",
+    "cookies"
   ]
 }
