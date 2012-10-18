@@ -5,10 +5,15 @@ chrome.tabs.getSelected(null,function(tab)
 {
     chrome.tabs.sendRequest(tab.id,{command: "getContext"}, function(response){
         context = response;
-        document.getElementById("sessionId").innerHTML = response.sessionId;
-        document.getElementById("sfhost").innerHTML = response.sfhost;
-        document.getElementById("orgId").innerHTML = response.orgId;
-        document.getElementById("userId").innerHTML = response.userId;
+        chrome.cookies.getAll({domain: context.sfhost, name: "sid"}, function(cookies){
+            for(var i = 0; i < cookies.length; i++){
+                if(cookies[i].domain == context.sfhost){
+                    console.log("Setting master sessionId to ",cookies);
+                    context.masterSessionId = cookies[i].value;
+                    populateSessionDetails();
+                }
+            }
+        });
     });
 }); 
 
@@ -68,6 +73,12 @@ var getDescribeForId = function(recordId){
     return bkg.cache.getConnection(context).getDescribeForId(recordId);
 }
 
+var populateSessionDetails = function(){
+    document.getElementById("sessionId").innerHTML = context.sessionId;
+    document.getElementById("sfhost").innerHTML = context.sfhost;
+    document.getElementById("orgId").innerHTML = context.orgId;
+    document.getElementById("userId").innerHTML = context.userId;  
+}
 var populateCRUD = function(recordId){
     var describe = getDescribeForId(recordId);
     console.log('populating data for describe');
