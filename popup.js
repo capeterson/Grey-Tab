@@ -10,10 +10,12 @@ chrome.tabs.getSelected(null,function(tab)
                 if(cookies[i].domain == context.sfhost){
                     console.log("Setting master sessionId to ",cookies);
                     context.masterSessionId = cookies[i].value;
-                    populateSessionDetails();
+                }else{
+                	console.log("ignoring session cookie for mismatched host",cookies[i]);
                 }
             }
         });
+        populateSessionDetails();
     });
 }); 
 
@@ -74,6 +76,7 @@ var getDescribeForId = function(recordId){
 }
 
 var populateSessionDetails = function(){
+	console.log("populating session details",context);
     document.getElementById("sessionId").innerHTML = context.sessionId;
     document.getElementById("sfhost").innerHTML = context.sfhost;
     document.getElementById("orgId").innerHTML = context.orgId;
