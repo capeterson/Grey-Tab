@@ -24,15 +24,8 @@
      * Takes any of the various forms of SFDC hostnames and spits out a "standard" format
      * @return {String}
      */
-    var cleanupHost = function(hostname){
-        var result = "";
-        var hostname = hostname.replace("visual.force.com","salesforce.com");
-        var hostparts = hostname.split("\.");
-        if(hostparts[hostparts.length-3] === "my") //as in my.salesforce.com
-            result = hostparts[hostparts.length-4]+"."+hostparts[hostparts.length-3]+".";
-        result = result+hostparts[hostparts.length-2]+"."+hostparts[hostparts.length-1];
-        return result;
-    }  
+    
+    
 
 	/**
 	 * Get URL parameters
@@ -81,9 +74,36 @@
 		sessionId     : getCookie('sid'),
 		orgId         : getCookie('oid'),
 		userId        : '005E' + getCookie('sid_Client').substring(0,11),
-		sfhost        : cleanupHost(window.location.host.toString()),
-		sid_client    : getCookie('sid_client')
+		sid_Client    : getCookie('sid_Client'),
+		pod           : null,
+		sfhost        : null
 	};
+	
+	( function() {
+        var instance = null;
+        var hostname = window.location.host;
+        //modified from http://stackoverflow.com/a/9722468/740787
+        var parts = hostname.split("\.");
+        if (parts.length == 3) 
+            instance = parts[0];
+        else if (parts.length == 5) 
+            instance = parts[1];
+        else if (parts.length == 4 && parts[1] === "my")
+            instance = parts[0]+".my";
+        
+        if(instance === null)
+            throw new Error("Unable to determine salesforce instance");
+        context.pod = instance;
+        
+        var isVf = hostname.indexOf(".visual.force.com") > 0;
+        if(parts[0].indexOf("--") > 0 && isVf){ //using my domain & this is sandbox or managed vf page
+            var subparts = parts[0].split("--");
+            context.sfhost = hostname.replace("--"+subparts[subparts.length-1],"").replace(".visual.force.com",".salesforce.com").replace(instance,"my");
+        }else{
+            context.sfhost = context.pod + ".salesforce.com";
+        } 
+        
+	}());
 
 	chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 		if(request.command == 'getContext') sendResponse(context);
