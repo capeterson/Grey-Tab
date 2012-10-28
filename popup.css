@@ -1,8 +1,17 @@
 div#content{
     min-width: 640px; 
     min-height: 750px;
-    display: inline-block;
 }
+
+.minwidth{
+    width: 640px;
+}
+
+.xscroll{
+    overflow-x:scroll; 
+    white-space: nowrap;
+}
+
 td.record-data{
     word-break: break-all; /* prevent long record fields from breaking tables */
 }
