@@ -1,0 +1,5 @@
+div#content{
+    min-width: 640px; 
+    min-height: 750px;
+    display: inline-block;
+}
