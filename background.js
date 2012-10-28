@@ -48,7 +48,7 @@ var Connection = {
 var cache = {
     cachedConnections: {},
     getConnection: function(context){
-        if(context == null || context.sessionId == null)
+        if(context == null || context.sessionId == null || context.sid_Client == null)
             throw "Invalid context";
         var result = this.cachedConnections[context.sessionId];
         if(result == null){
