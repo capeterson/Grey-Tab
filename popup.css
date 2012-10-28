@@ -3,3 +3,6 @@ div#content{
     min-height: 750px;
     display: inline-block;
 }
+td.record-data{
+    word-break: break-all; /* prevent long record fields from breaking tables */
+}

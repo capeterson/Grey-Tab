@@ -34,7 +34,7 @@ var gatherRecordInfo = function(){
 	for(var i = 0; i < record.fields.length; i++){
 		var field = record.fields[i];
 		console.log("Field: ",field);
-		$('#fieldTable > tbody:last').append("<tr><td>"+field.name+"</td><td>"+field.label+"</td><td>"+record.values[field.name]+"</td></tr>");
+		$('#fieldTable > tbody:last').append("<tr><td>"+field.name+"</td><td>"+field.label+"</td><td class=\"record-data\">"+record.values[field.name]+"</td></tr>");
 	}
 	console.log();
 }
