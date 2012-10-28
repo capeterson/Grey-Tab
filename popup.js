@@ -44,7 +44,7 @@ var gatherRecordInfo = function(){
 		        $( "#tabs" ).tabs();
 				$( "#tabs" ).bind(
 					"tabsselect",function(event,ui){ 
-						if(ui.tab.hash === "#tab-schema"){
+						if(ui.tab.hash === "#tab-record"){
 							gatherRecordInfo();
 						}
 					}
