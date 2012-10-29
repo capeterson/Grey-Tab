@@ -2,6 +2,10 @@ div#content{
     min-width: 640px; 
     min-height: 750px;
 }
+table#fieldTable{
+    table-layout: fixed;
+    word-wrap: break-word;
+}
 
 .minwidth{
     width: 640px;
@@ -10,8 +14,4 @@ div#content{
 .xscroll{
     overflow-x:scroll; 
     white-space: nowrap;
-}
-
-td.record-data{
-    word-break: break-all; /* prevent long record fields from breaking tables */
 }
