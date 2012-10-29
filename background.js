@@ -19,7 +19,6 @@ var Connection = {
         this.globalDescribe = this.sfconnection.describeGlobal();
     },
     getDescribeForId: function(recordId){
-        console.log("looking up describe for "+recordId.substring(0,3));
         if(this.globalDescribe == null)
             this.fetchGlobalDescribe();
         var result;
@@ -50,10 +49,10 @@ var cache = {
     getConnection: function(context){
         if(context == null || context.sessionId == null || context.sid_Client == null)
             throw "Invalid context";
-        var result = this.cachedConnections[context.sessionId];
+        var result = this.cachedConnections[context.sid_Client];
         if(result == null){
             result = Object.create(Connection);
-            this.cachedConnections[context.sessionId] = result;
+            this.cachedConnections[context.sid_Client] = result;
             result.sfconnection = new sforce.Connection();
             console.log("Setting up API connection with session Id "+context.masterSessionId+" to "+context.sfhost);
             result.sfconnection.init(context.masterSessionId,"https://"+context.sfhost+"/services/Soap/u/25.0");

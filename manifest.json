@@ -24,5 +24,8 @@
     "notifications",
     "contextMenus",
     "cookies"
+  ],
+  "web_accessible_resources": [
+    "services/record_history.html"
   ]
 }

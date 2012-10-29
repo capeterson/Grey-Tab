@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <title>The Chrome Plguin formerly known as null</title>
+    <!-- JavaScript and HTML must be in separate files for security. -->
+    <link type="text/css" href="popup.css" rel="Stylesheet"/>
+    <link type="text/css" href="jquery/css/smoothness/jquery-ui-1.8.24.custom.css" rel="Stylesheet" />	
+    <script src="jquery/js/jquery.js"></script>
+    <script src="jquery/js/jquery-ui.js"></script>
+    <script src="shared/escape.js"></script>
+    <script src="popup.js"></script>
+  </head>
+  <body>
+    <div id="content">
+		<div id="tabs">
+			<ul>
+				<li><a href="#tab-current">Current State</a></li>
+				<li><a href="#tab-saved">Saved States</a></li>
+			</ul>
+			<div id="tab-current">
+				<ul>
+					<li>
+						Currently viewing record: <span id="currentRecordId">UNDEFINED</span>
+					</li>
+					<li>
+						<span class="infotip" title="Also known as the API Name">SObject Name</span>: <span id="sobject_name">UNDEFINED</span>
+					</li>
+					<li>
+						SObject Label: <span id="sobject_label">UNDEFINED</span>
+					</li>
+					<li>
+						CRUD Permissions
+						<ul>
+							<li>Creatable: <span id="CRUD_c"></span></li>
+							<li>Readable: <span id="CRUD_r"></span></li>
+							<li>Updateable: <span id="CRUD_u"></span></li>
+							<li>Deletable: <span id="CRUD_d"><span></li>
+						</ul>
+					</li>
+					<li>
+						Fields
+						<table id="fieldTable" border="1" style="width:100%">
+							<thead>
+								<tr>
+									<td><span class="infotip" title="Also known as the API Name">Field Name</span></td>
+									<td>Field Label</td>
+									<td>Field Value</td>
+								</tr>
+							</thead>
+							<tbody>
+							
+							</tbody>
+						</table>
+					</li>
+				</ul>
+			</div>
+			<div id="tab-saved">
+			    Not yet implemented
+			</div>
+		</div>
+	</div>
+  </body>
+</html>
