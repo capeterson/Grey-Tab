@@ -45,7 +45,22 @@ var gatherRecordInfo = function(){
 				$( "#tabs" ).bind(
 					"tabsselect",function(event,ui){ 
 						if(ui.tab.hash === "#tab-record"){
-							gatherRecordInfo();
+							if(context.currentRecord == null){
+							    $("#dialog-message").text("No record Id found in the current page's URL.");
+							    $("#dialog").dialog({
+							        title:  "No record Id found",
+							        resizable: false,
+							        modal: true,
+							        buttons: {
+							            Ok: function(){
+							                $(this).dialog("close");    
+							            }
+							        } 
+							    });
+							    return false;
+							}else{
+							    gatherRecordInfo();
+							}
 						}
 					}
 				);
