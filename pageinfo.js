@@ -2,6 +2,21 @@
 //isolate from global scope
 (function() {
 	/**
+	 * Finds the salesforce viewstate string, if any, base64 decodes it, and return's it's length.
+	 * The length returned is the blob's lenght, NOT the base64 string - which is how SFDC calculates it
+	 * @return {integer|null}
+	 */
+	var calculateViewstateSize = function(){
+	    var restult;
+	    try{
+	        result = atob(document.getElementById('com.salesforce.visualforce.ViewState').value).length;
+	    }catch(ex){
+	        result = null;
+	    }
+	    return result;
+	}
+	
+	/**
 	 * Get cookie value
 	 * @param key
 	 * @return {String|null}
@@ -106,8 +121,12 @@
 	}());
 
 	chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-		if(request.command == 'getContext') sendResponse(context);
-		else throw 'Unknown command ' + request.command;
+		if(request.command == 'getContext') 
+		    sendResponse(context);
+		else if(request.command == 'getViewstateSize')
+		    sendResponse(calculateViewstateSize());
+		else 
+		    throw 'Unknown command ' + request.command;
 	});
 
 }());
