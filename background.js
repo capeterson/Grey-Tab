@@ -8,7 +8,37 @@ Object.create = function(o){
     var result = function(){};
     result.prototype = o;
     return new result();
-    
+}
+
+var SObjectType = function(sforceXML){
+    if(!(this instanceof SObjectType))
+        throw Error("Constructor called as a function.");
+    this.name = sforceXML.name;
+    this.label = sforceXML.label;
+    this.labelPlural = sforceXML.label;
+    this.activateable = sforceXML.activateable;
+    this.createable = sforceXML.createable;
+    this.custom = sforceXML.custom;
+    this.customSetting = sforceXML.custom;
+    this.deletable = sforceXML.deletable;
+    this.deprecatedAndHidden = sforceXML.deprecatedAndHidden;
+    this.feedEnabled = sforceXML.feedEnabled;
+    this.keyPrefix =  sforceXML.keyPrefix;      
+    this.layoutable = sforceXML.layoutable;
+    this.mergeable = sforceXML.mergeable;
+    this.queryable = sforceXML.queryable;
+    this.replicateable = sforceXML.replicateable;
+    this.retrieveable = sforceXML.retrieveable;
+    this.searchable = sforceXML.searchable;
+    this.triggerable = sforceXML.triggerable;
+    this.undeletable = sforceXML.undeletable;
+    this.updateable = sforceXML.updateable;
+}
+
+var OrganizationSchema = function(){
+    if(!(this instanceof OrganizationSchema))
+        throw Error("Constructor called as a function.");
+    this.sObjectTypes = {};
 }
 
 var Connection = {
@@ -18,6 +48,18 @@ var Connection = {
     lastUsed: Date.now(),
     fetchGlobalDescribe: function(){
         this.globalDescribe = this.sfconnection.describeGlobal();
+    },
+    getOrganizationSchema: function(){
+        //TODO: add better caching (on connection instantiation?)
+        if(this.globalDescribe == null)
+            this.fetchGlobalDescribe();
+        var result = new OrganizationSchema();
+        for(var i = 0; i < this.globalDescribe.sobjects.length; i++){
+            var describe = this.globalDescribe.sobjects[i];
+            var objType = new SObjectType(describe);
+            result.sObjectTypes[objType.name.toLowerCase()] = objType;
+        }
+        return result;
     },
     getDescribeForId: function(recordId){
         if(this.globalDescribe == null)

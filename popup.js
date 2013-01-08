@@ -19,6 +19,11 @@ chrome.tabs.getSelected(null,function(tab)
     });
 }); 
 
+var getOrganizationSchema = function(){
+	var bkg = chrome.extension.getBackgroundPage();
+    return bkg.cache.getConnection(context).getOrganizationSchema();
+}
+
 var gatherRecordInfo = function(){
 	record.id = context.currentRecord;
 	record.describe = getDescribeForId(record.id);
