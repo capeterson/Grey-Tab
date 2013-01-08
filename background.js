@@ -15,6 +15,7 @@ var Connection = {
     sfconnection: null,
     globalDescribe: null,
 	fullDescribes: new Object(),
+    lastUsed: Date.now(),
     fetchGlobalDescribe: function(){
         this.globalDescribe = this.sfconnection.describeGlobal();
     },
@@ -60,7 +61,26 @@ var cache = {
         }else{
             UserContext.getUrl = function(path){ return "https://"+context.sfhost+path; }; //hack for apex.js to work
         }
+        result.lastUsed = Date.now();
         return result;
     }
+
 };
+
+var cleanupTimer = 900000; // 15 minutes - value is miliseconds between cleanup runs. 
+setInterval(
+    function(){
+        //Clear out connections unused for x seconds
+        var maxConnectionCacheAge = config.getConfig("connection_cleanup_age") * 60 * 1000;
+        console.log('Running old connection cleanup. Removing entries older than '+maxConnectionCacheAge+' miliseconds.');
+        var now = Date.now();
+        for(var key in cache.cachedConnections){
+            if( (now - maxConnectionCacheAge) >= cache.cachedConnections[key].lastUsed){
+                console.log('removing connection '+key+'. Last used '+cache.cachedConnections[key].lastUsed);
+                delete cache.cachedConnections[key];
+            }
+        }
+    },
+    cleanupTimer
+);
 
