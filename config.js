@@ -7,7 +7,7 @@ var config = {
 	getConfig: function(configName){
 		var configValue = localStorage[configName];
 		if(configValue == null || configValue == undefined)
-			configValue = defaults[configName];
+			configValue = this.defaults[configName];
 		return configValue;
 	}
 }
