@@ -10,6 +10,12 @@ Object.create = function(o){
     return new result();
 }
 
+var OrganizationSchema = function(){
+    if(!(this instanceof OrganizationSchema))
+        throw Error("Constructor called as a function.");
+    this.sObjectTypes = {};
+}
+
 var SObjectType = function(sforceXML){
     if(!(this instanceof SObjectType))
         throw Error("Constructor called as a function.");
@@ -35,10 +41,37 @@ var SObjectType = function(sforceXML){
     this.updateable = sforceXML.updateable;
 }
 
-var OrganizationSchema = function(){
-    if(!(this instanceof OrganizationSchema))
+var SObjectField = function(sforceXML){
+    if(!(this instanceof SObjectField))
         throw Error("Constructor called as a function.");
-    this.sObjectTypes = {};
+    this.autoNumber = sforceXML.autoNumber;
+    this.byteLength = sforceXML.byteLength;
+    this.calculated = sforceXML.calculated;
+    this.calculatedFormula = sforceXML.calculatedFormula;
+    this.caseSensitive = sforceXML.caseSensitive;
+    this.createable = sforceXML.createable;
+    this.custom = sforceXML.custom;
+    this.defaultedOnCreate = sforceXML.defaultedOnCreate;
+    this.deprecatedAndHidden = sforceXML.deprecatedAndHidden;
+    this.digits = sforceXML.digits;
+    this.filterable = sforceXML.filterable;
+    this.groupable = sforceXML.groupable;
+    this.idLookup = sforceXML.idLookup;
+    this.label = sforceXML.label;
+    this.length = sforceXML.length;
+    this.name = sforceXML.name;
+    this.nameField = sforceXML.nameField;
+    this.namePointing = sforceXML.namePointing;
+    this.nillable = sforceXML.nillable;
+    this.permissionable = sforceXML.permissionable;
+    this.precision = sforceXML.precision;
+    this.restrictedPicklist = sforceXML.restrictedPicklist;
+    this.scale = sforceXML.scale;
+    this.soapType = sforceXML.soapType;
+    this.sortable = sforceXML.sortable;
+    this.type = sforceXML.type;
+    this.unique = sforceXML.unique;
+    this.updateable = sforceXML.updateable;
 }
 
 var Connection = {
