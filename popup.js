@@ -17,6 +17,19 @@ chrome.tabs.getSelected(null,function(tab)
         });
         populateSessionDetails();
     });
+    chrome.tabs.sendRequest(tab.id,{command: "getViewstateSize"}, function(response){
+        try{
+        	if(response === null){
+        		$("#viewstate").hide();
+	        }else{
+	        	var formattedSize = (response / 1024.0).toFixed(2);
+	        	$("#viewstateUsed").text(formattedSize+"kB");
+	        }
+	    }catch(ex){
+	    	$("#viewstateUsed").text("Unable to calculate.");
+	    	console.log('Calculating viewstate failed:',ex);
+	    }
+    });
 }); 
 
 var getOrganizationSchema = function(){

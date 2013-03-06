@@ -16,7 +16,9 @@ var OrganizationSchema = function(){
     this.sObjectTypes = {};
 }
 
-var SObjectType = function(sforceXML){
+var SObjectType = function(sforceXML, connectionId){
+    if(sforceXML == null || sforceXML == undefined)
+        throw Error("First argument cannot be null");
     if(!(this instanceof SObjectType))
         throw Error("Constructor called as a function.");
     this.name = sforceXML.name;
@@ -39,6 +41,31 @@ var SObjectType = function(sforceXML){
     this.triggerable = sforceXML.triggerable;
     this.undeletable = sforceXML.undeletable;
     this.updateable = sforceXML.updateable;
+
+    var that = this;
+    var fields = null;
+    var connectionId = connectionId;
+    var fetchFields = function(){
+        var res = cache.cachedConnections[connectionId].getFieldsForSObject(that.name);
+        fields = [];
+        for(var i = 0; i < res.fields.length; i++)
+            fields.push( new SObjectField(res.fields[i]) );
+        console.log('Got fields: ',res,' for ',that.name);
+    }
+
+    this.getFields = function(){
+        fetchFields();
+        var result = [];
+        for(var fieldName in fields){
+            result.push(fields[fieldName]);
+        }
+        return result;
+    };
+    this.getField = function(fieldName){
+        fetchFields();
+        var result = fields[fieldName.toLowerCase()];
+        return result;
+    };
 }
 
 var SObjectField = function(sforceXML){
@@ -47,7 +74,7 @@ var SObjectField = function(sforceXML){
     this.autoNumber = sforceXML.autoNumber;
     this.byteLength = sforceXML.byteLength;
     this.calculated = sforceXML.calculated;
-    this.calculatedFormula = sforceXML.calculatedFormula;
+    this.calculated = sforceXML.calculated;
     this.caseSensitive = sforceXML.caseSensitive;
     this.createable = sforceXML.createable;
     this.custom = sforceXML.custom;
@@ -74,7 +101,9 @@ var SObjectField = function(sforceXML){
     this.updateable = sforceXML.updateable;
 }
 
+//TODO: switch to a constructor
 var Connection = {
+    connectionId: null, //aka sid_client
     sfconnection: null,
     globalDescribe: null,
 	fullDescribes: new Object(),
@@ -89,7 +118,7 @@ var Connection = {
         var result = new OrganizationSchema();
         for(var i = 0; i < this.globalDescribe.sobjects.length; i++){
             var describe = this.globalDescribe.sobjects[i];
-            var objType = new SObjectType(describe);
+            var objType = new SObjectType(describe,this.connectionId);
             result.sObjectTypes[objType.name.toLowerCase()] = objType;
         }
         return result;
@@ -128,7 +157,8 @@ var cache = {
         var result = this.cachedConnections[context.sid_Client];
         if(result == null){
             result = Object.create(Connection);
-            this.cachedConnections[context.sid_Client] = result;
+            result.connectionId = context.sid_Client;
+            this.cachedConnections[result.connectionId] = result;
             result.sfconnection = new sforce.Connection();
             console.log("Setting up API connection with session Id "+context.masterSessionId+" to "+context.sfhost);
             result.sfconnection.init(context.masterSessionId,"https://"+context.sfhost+"/services/Soap/u/25.0");
@@ -146,7 +176,7 @@ var cleanupTimer = 900000; // 15 minutes - value is miliseconds between cleanup 
 setInterval(
     function(){
         //Clear out connections unused for x seconds
-        var maxConnectionCacheAge = config.getConfig("connection_cleanup_age") * 60 * 1000;
+        var maxConnectionCacheAge = config.getConfig("connection_cleanup_age") * 60 * 60 * 1000; //config is hrs - need it in ms
         console.log('Running old connection cleanup. Removing entries older than '+maxConnectionCacheAge+' miliseconds.');
         var now = Date.now();
         for(var key in cache.cachedConnections){
