@@ -54,7 +54,10 @@ var gatherRecordInfo = function(){
 		console.log("Field: ",field);
 		$('#fieldTable > tbody:last').append("<tr><td>"+field.name+"</td><td>"+field.label+"</td><td class=\"record-data\">"+escapeHtml(record.values[field.name])+"</td></tr>");
 	}
-	console.log();
+}
+
+var invalidateSession = function(){
+	chrome.extension.getBackgroundPage().cache.removeConnection(context);
 }
 
  $(document).ready(function() {
@@ -77,7 +80,27 @@ var gatherRecordInfo = function(){
 							    });
 							    return false;
 							}else{
-							    gatherRecordInfo();
+							    try{
+							    	gatherRecordInfo();
+							    }catch(ex){
+							    	if(ex.faultcode == "sf:INVALID_SESSION_ID"){
+							    		invalidateSession();
+							    		$("#dialog-message").text("Your salesforce session is invalid. Please reload the page and try again.");
+							    	}else{
+							    		$("#dialog-message").text("An error occured trying to load record details: "+ex.exceptionMessage);
+							    	}
+							    	$("#dialog").dialog({
+							    		title: 	"Error",
+							    		resizable: false,
+							    		modal: 	true,
+							    		buttons: {
+							    			Ok: function(){
+							    				$(this).dialog("close");
+							    			}
+							    		}	
+							    	});
+							    	return false;
+							    }
 							}
 						}
 					}

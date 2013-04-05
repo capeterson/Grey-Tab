@@ -168,6 +168,11 @@ var cache = {
         }
         result.lastUsed = Date.now();
         return result;
+    },
+    removeConnection: function(context){
+        if(context == null || context.sessionId == null || context.sid_Client == null)
+            throw "Invalid context";
+        delete this.cachedConnections[context.sid_Client];
     }
 
 };
