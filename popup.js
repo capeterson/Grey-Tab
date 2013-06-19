@@ -168,7 +168,7 @@ var hideFields = function(searchText){
     });
 }
 var showFields = function(searchText){
-    $('tr[id*="' + searchtext + '"]').each(function(){
+    $('tr[id*="' + searchText + '"]').each(function(){
         $(this).show();
     });
 }
