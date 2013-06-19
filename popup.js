@@ -52,7 +52,7 @@ var gatherRecordInfo = function(){
 	for(var i = 0; i < record.fields.length; i++){
 		var field = record.fields[i];
 		console.log("Field: ",field);
-		$('#fieldTable > tbody:last').append("<tr><td>"+field.name+"</td><td>"+field.label+"</td><td class=\"record-data\">"+escapeHtml(record.values[field.name])+"</td></tr>");
+		$('#fieldTable > tbody:last').append("<tr id='" + field.name.toLowerCase() + "'><td>"+field.name+"</td><td>"+field.label+"</td><td class=\"record-data\">"+escapeHtml(record.values[field.name])+"</td></tr>");
 	}
 }
 
@@ -61,6 +61,7 @@ var invalidateSession = function(){
 }
 
  $(document).ready(function() {
+    document.getElementById('search').addEventListener('keyup', filterFields);
             $(function() {
 		        $( "#tabs" ).tabs();
 				$( "#tabs" ).bind(
@@ -143,4 +144,31 @@ var populateCRUD = function(recordId){
     console.log('populating data for describe');
     console.log(describe);
     $('#CRUD > tbody:last').after('<tr><td>'+describe.createable+'</td><td>'+describe.queryable+'</td><td>'+describe.updateable+'</td><td>'+describe.deletable+'</td></tr>');
+}
+
+var filterFields = function(){
+    var searchText = $('#search').val().toLowerCase();
+    if (searchText === '') {
+        showAll();
+    } else {
+        hideFields(searchText);
+        showFields(searchText);
+    }
+}
+
+var showAll = function(){
+    $('tr').each(function(){
+        $(this).show();
+    });
+}
+
+var hideFields = function(searchText){
+    $('tr:not([id*="' + searchText + '"])').each(function(){
+        $(this).hide();
+    });
+}
+var showFields = function(searchText){
+    $('tr[id*="' + searchtext + '"]').each(function(){
+        $(this).show();
+    });
 }
