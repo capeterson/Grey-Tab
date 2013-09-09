@@ -1,3 +1,46 @@
+var podMapping = {
+  "ssl": "0",
+  "na1": "3",
+  "na2": "4",
+  "na3": "5",
+  "na4": "6",
+  "na5": "7",
+  "na6": "8",
+  "na7": "A",
+  "na8": "C",
+  "na9": "E",
+  "na10": "F",
+  "na11": "G",
+  "na12": "U",
+  "na13": "a",
+  "na14": "d",
+  "na15": "i",
+  "ap": "1",
+  "ap1": "9",
+  "emea": "2",
+  "eu1": "D",
+  "eu2": "b",
+  "tapp0": "T",
+  "cs1": "S",
+  "cs2": "R",
+  "cs3": "Q",
+  "cs4": "P",
+  "cs5": "O",
+  "cs6": "N",
+  "cs7": "M",
+  "cs8": "L",
+  "cs9": "K",
+  "cs10": "J",
+  "cs11": "Z",
+  "cs12": "V",
+  "cs13": "W",
+  "cs14": "c",
+  "cs15": "e",
+  "cs16": "f",
+  "cs17": "g",
+  "prerelna1.pre": "t"
+}
+
 /**
  * Finds the salesforce viewstate string, if any, base64 decodes it, and return's it's length.
  * The length returned is the blob's lenght, NOT the base64 string - which is how SFDC calculates it
@@ -85,7 +128,7 @@ var context = {
 	currentRecord : getCurrentRecordId(window.location.href),
 	sessionId     : getCookie('sid'),
 	orgId         : getCookie('sid').substring(0,15),
-	userId        : '005E' + getCookie('sid_Client').substring(0,11),
+	userId        : null,
 	sid_Client    : getCookie('sid_Client'),
 	pod           : null,
 	sfhost        : null
@@ -106,6 +149,7 @@ var context = {
     if(instance === null)
         throw new Error("Unable to determine salesforce instance");
     context.pod = instance;
+    context.userId = !!podMapping[instance] ? '005' + podMapping[instance] + getCookie('sid_Client').substring(0,11) : 'Unable to determine';
     
     var isVf = hostname.indexOf(".visual.force.com") > 0;
     if(parts[0].indexOf("--") > 0 && isVf){ //using my domain & this is sandbox or managed vf page
