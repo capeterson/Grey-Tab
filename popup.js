@@ -52,7 +52,7 @@ var gatherRecordInfo = function(){
 	for(var i = 0; i < record.fields.length; i++){
 		var field = record.fields[i];
 		console.log("Field: ",field);
-		$('#fieldTable > tbody:last').append("<tr id='" + field.name.toLowerCase() + "'><td>"+field.name+"</td><td>"+field.label+"</td><td class=\"record-data\">"+escapeHtml(record.values[field.name])+"</td></tr>");
+		$('#fieldTable > tbody:last').append('<tr class="fieldInfo" id='+field.name.toLowerCase()+'><td>'+field.name+'</td><td>'+field.label+'</td><td class="record-data">'+escapeHtml(record.values[field.name])+'</td></tr>');
 	}
 }
 
@@ -150,8 +150,7 @@ var filterFields = function(){
     if (searchText === '') {
         showAll();
     } else {
-        hideFields(searchText);
-        showFields(searchText);
+        applySearchFilter(searchText);
     }
 }
 
@@ -161,13 +160,19 @@ var showAll = function(){
     });
 }
 
-var hideFields = function(searchText){
-    $('tr:not([id*="' + searchText + '"])').each(function(){
-        $(this).hide();
-    });
-}
-var showFields = function(searchText){
-    $('tr[id*="' + searchText + '"]').each(function(){
-        $(this).show();
-    });
+var applySearchFilter = function(searchText){
+	$('#fieldTable tr.fieldInfo').each(function(index,el){
+		var matchedTerm = false;
+		for(var i = 0; i < el.children.length; i++){ 
+			if(el.children[i].textContent.toLowerCase().indexOf(searchText.toLowerCase()) !== -1){
+				matchedTerm = true;
+				break;
+			} 
+		}
+		if(matchedTerm){
+			$(el).show();
+		}else{
+			$(el).hide();
+		}
+	})
 }
