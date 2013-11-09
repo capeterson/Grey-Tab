@@ -1,6 +1,6 @@
 {
   "name": "Grey Tab",
-  "version": "1.6",
+  "version": "1.7",
   "manifest_version": 2,
   "description": "A small but growing collection of neat tricks for debugging force.com applications.",
   "browser_action": {
