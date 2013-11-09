@@ -85,7 +85,6 @@ var context = {
 	currentRecord : getCurrentRecordId(window.location.href),
 	sessionId     : getCookie('sid'),
 	orgId         : getCookie('sid').substring(0,15),
-	userId        : '005E' + getCookie('sid_Client').substring(0,11),
 	sid_Client    : getCookie('sid_Client'),
 	pod           : null,
 	sfhost        : null

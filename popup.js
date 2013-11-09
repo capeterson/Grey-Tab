@@ -137,7 +137,6 @@ var populateSessionDetails = function(){
     document.getElementById("sessionId").innerHTML = context.sessionId;
     document.getElementById("sfhost").innerHTML = context.sfhost;
     document.getElementById("orgId").innerHTML = context.orgId;
-    document.getElementById("userId").innerHTML = context.userId;  
 }
 var populateCRUD = function(recordId){
     var describe = getDescribeForId(recordId);
