@@ -6,3 +6,7 @@ Referenced Packages
 Archive.zip
 
 .DS_Store
+
+*.sublime-project
+
+*.sublime-workspace
