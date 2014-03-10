@@ -110,9 +110,11 @@ var context = {
     if(parts[0].indexOf("--") > 0 && isVf){ //using my domain & this is sandbox or managed vf page
         var subparts = parts[0].split("--");
         context.sfhost = hostname.replace("--"+subparts[subparts.length-1],"").replace(".visual.force.com",".salesforce.com").replace(instance,"my");
+    }else if(parts[0].indexOf("--") > 0 && !isVf){ //named sandbox
+    	context.sfhost = hostname;
     }else{
         context.sfhost = context.pod + ".salesforce.com";
-    } 
+    }
     
 }());
 
