@@ -590,7 +590,7 @@ sforce.Transport = function(url) {
         this.connection.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
         this.connection.setRequestHeader("SOAPAction", "\"\"");
         this.connection.setRequestHeader("Accept", "text/xml");
-        this.connection.setRequestHeader("User-Agent", "Grey-Tab 1.8");
+        this.connection.setRequestHeader("User-Agent", "SFAJAX 1.0");
         this.connection.send(envelope);
         if (async && typeof(timeout) !== "undefined") {
             this.setTimeoutOn(holder, timeout);
