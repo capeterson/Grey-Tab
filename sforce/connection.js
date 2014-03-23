@@ -1,15 +1,10 @@
 /*
-Salesforce.com AJAX Connector 25.0
+Salesforce.com AJAX Connector 29.0
 Copyright, 1999, salesforce.com, inc.
 All Rights Reserved
 */
-
-var sforce;
-
 /** check if sforce is already created by some other lib*/
-if (!sforce) {
-    sforce = {};
-}
+window.sforce = window.sforce || {};
 
 sforce.internal = {};
 /** StringBuffer */
@@ -487,7 +482,7 @@ sforce.internal.Debug = function() {
 
         if (this.win === null || !this.win.document) {
             this.output = null;
-            this.win = window.open((typeof window.UserContext != "undefined") ? UserContext.getUrl('/soap/ajax/25.0/debugshell.html') : '/soap/ajax/25.0/debugshell.html', '',
+            this.win = window.open((typeof window.UserContext != "undefined") ? UserContext.getUrl('/soap/ajax/29.0/debugshell.html') : '/soap/ajax/29.0/debugshell.html', '',
                     'width=800,height=400,toolbar=no,location=no,directories=no,alwaysRaised=yes,' +
                     'status=no,menubar=no,scrollbars=yes,copyhistory=yes,resizable=yes');
         }
@@ -544,9 +539,9 @@ sforce.internal.Debug = function() {
         var start = response.indexOf("<debugLog>");
         var end = response.indexOf("</debugLog>");
         if (start === -1)
-        	start = 0;
+            start = 0;
         else
-        	start = start + '<debugLog>'.length;
+            start = start + '<debugLog>'.length;
         if (end === -1) end = response.length;
         var msg = response.substring(start, end);
 
@@ -595,7 +590,7 @@ sforce.Transport = function(url) {
         this.connection.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
         this.connection.setRequestHeader("SOAPAction", "\"\"");
         this.connection.setRequestHeader("Accept", "text/xml");
-        //this.connection.setRequestHeader("User-Agent", "SFAJAX 1.0");
+        this.connection.setRequestHeader("User-Agent", "SFAJAX 1.0");
         this.connection.send(envelope);
         if (async && typeof(timeout) !== "undefined") {
             this.setTimeoutOn(holder, timeout);
@@ -1007,7 +1002,6 @@ sforce.SoapTransport.prototype.onFailure = function(res, writer) {
 };
 
 sforce.SoapTransport.prototype.send = function(url, writer, isArray, connectionCallback) {
-    console.log('sending request to '+url);
     this.isArray = isArray;
     var transport = new sforce.Transport(url);
     this.isAsync = connectionCallback ? true : false;
@@ -1056,20 +1050,20 @@ sforce.SoapTransport.prototype.httpCallback = function(response, success) {
             }
 
             if (this.isAsync) {
-            	try {
-            		this.beforeCallback();
-            		if (typeof this.connectionCallback == "function") {
-            			this.connectionCallback(this.result);
-            		} else {
-            			if (this.connectionCallback.onSuccess) {
-            				this.connectionCallback.onSuccess(this.result, this.connectionCallback.source);
-            			} else {
-            				throw "Unable to find onSuccess method in the callback object";
-            			}
-            		}
-            	} finally {
-            		this.afterCallback();
-            	}
+                try {
+                    this.beforeCallback();
+                    if (typeof this.connectionCallback == "function") {
+                        this.connectionCallback(this.result);
+                    } else {
+                        if (this.connectionCallback.onSuccess) {
+                            this.connectionCallback.onSuccess(this.result, this.connectionCallback.source);
+                        } else {
+                            throw "Unable to find onSuccess method in the callback object";
+                        }
+                    }
+                } finally {
+                    this.afterCallback();
+                }
             }
         } else {
             if (typeof(response.nodeName) !== "undefined") {
@@ -1092,12 +1086,12 @@ sforce.SoapTransport.prototype.httpCallback = function(response, success) {
 sforce.SoapTransport.prototype.sendFault = function(fault) {
     if (this.isAsync) {
         if (this.connectionCallback.onFailure) {
-        	try {
-        		this.beforeCallback();
-        		this.connectionCallback.onFailure(fault, this.connectionCallback.source);
-        	} finally {
-        		this.afterCallback();
-        	}
+            try {
+                this.beforeCallback();
+                this.connectionCallback.onFailure(fault, this.connectionCallback.source);
+            } finally {
+                this.afterCallback();
+            }
         } else {
             this.onFailure(fault);
         }
@@ -1136,6 +1130,13 @@ sforce.MergeRequest = function() {
 
 sforce.MergeRequest.prototype = new sforce.Xml("request");
 
+/** QuickAction */
+
+
+sforce.QuickAction = function() {
+};
+
+sforce.QuickAction.prototype = new sforce.Xml("quickActions");
 
 /** Connection */
 
@@ -1154,7 +1155,7 @@ sforce.Connection = function() {
     this.assignmentRuleHeader = null;
     this.transferToUserId = null;
     this.debuggingHeader = null;
-    this.serverUrl = (typeof window.UserContext != "undefined") ? UserContext.getUrl("/services/Soap/u/25.0") : "/services/Soap/u/25.0";
+    this.serverUrl = (typeof window.UserContext != "undefined") ? UserContext.getUrl("/services/Soap/u/29.0") : "/services/Soap/u/29.0";
 };
 
 
@@ -1215,8 +1216,42 @@ sforce.Connection.prototype.describeLayout = function(type, recordTypes, callbac
     return this.invoke("describeLayout", [arg1, arg2], false, callback);
 };
 
+sforce.Connection.prototype.describeAvailableQuickActions = function(parentType, callback) {
+    var arg = new sforce.internal.Parameter("parentType", parentType, false);
+    return this.invoke("describeAvailableQuickActions", [arg], true, callback);
+};
+
+sforce.Connection.prototype.describeQuickActions = function(quickActionNames, callback) {
+    var arg = new sforce.internal.Parameter("quickActionNames", quickActionNames, true);
+    return this.invoke("describeQuickActions", [arg], true, callback);
+};
+
+sforce.Connection.prototype.performQuickActions = function(quickActions, callback) {
+    var arg = new sforce.internal.Parameter("quickActions", quickActions, true);
+    return this.invoke("performQuickActions", [arg], true, callback);
+};
+
+sforce.Connection.prototype.describeCompactLayouts = function(type, recordTypes, callback) {
+    var arg = new sforce.internal.Parameter("sObjectType", type, false);
+    if (!recordTypes) {
+        recordTypes = [];
+    }
+    var arg2 = new sforce.internal.Parameter("recordTypeIds", recordTypes, true);
+    return this.invoke("describeCompactLayouts", [arg, arg2], false, callback);
+};
+
 sforce.Connection.prototype.describeTabs = function(callback) {
     return this.invoke("describeTabs", [], true, callback);
+};
+
+sforce.Connection.prototype.describeTheme = function(themeNames, callback) {
+    var arg = new sforce.internal.Parameter("themeNames", themeNames, true);
+    return this.invoke("describeTheme", [arg], true, callback);
+};
+
+
+sforce.Connection.prototype.describeGlobalTheme = function(callback) {
+    return this.invoke("describeGlobalTheme", [], true, callback);
 };
 
 sforce.Connection.prototype.describeSoftphoneLayout = function(callback) {
@@ -1229,6 +1264,9 @@ sforce.Connection.prototype.describeMiniLayout = function (type, recordTypeIds, 
     return this.invoke("describeMiniLayout", [arg1, arg2], false, callback);
 };
 
+sforce.Connection.prototype.describeSearchScopeOrder = function(callback) {
+     return this.invoke("describeSearchScopeOrder", [], true, callback);
+};
 
 sforce.Connection.prototype.create = function (sobjects, callback) {
     var arg = new sforce.internal.Parameter("sObjects", sobjects, true);
@@ -1732,7 +1770,7 @@ var UserContext = (typeof window.UserContext != "undefined") ? window.UserContex
     siteUrlPrefix : "",
     getUrl : function (url) {
         // fix URL for sites with prefixes
-        if (typeof url == "undefined" || typeof UserContext.siteUrlPrefix == "undefined" || !UserContext.siteUrlPrefix) 
+        if (typeof url == "undefined" || typeof UserContext.siteUrlPrefix == "undefined" || !UserContext.siteUrlPrefix)
             return url;
 
         if (url.indexOf('/') != 0)
@@ -1749,7 +1787,7 @@ if (typeof(__sfdcSiteUrlPrefix) != "undefined") {
     UserContext.siteUrlPrefix = __sfdcSiteUrlPrefix;
 }
 
-sforce.connection.serverUrl = (typeof window.UserContext != "undefined") ? UserContext.getUrl("/services/Soap/u/25.0") : "/services/Soap/u/25.0";
+sforce.connection.serverUrl = (typeof window.UserContext != "undefined") ? UserContext.getUrl("/services/Soap/u/29.0") : "/services/Soap/u/29.0";
 
 if (typeof(__sfdcSessionId) != "undefined") {
     sforce.connection.sessionId = __sfdcSessionId;
