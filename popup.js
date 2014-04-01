@@ -23,7 +23,10 @@ chrome.tabs.getSelected(null,function(tab)
         		$("#viewstate").hide();
 	        }else{
 	        	var formattedSize = (response / 1024.0).toFixed(2);
-	        	$("#viewstateUsed").text(formattedSize+"kB");
+	        	if(isNaN(formattedSize))
+	        		$("#viewstateUsed").text("0kB");
+	        	else
+	        		$("#viewstateUsed").text(formattedSize+"kB");
 	        }
 	    }catch(ex){
 	    	$("#viewstateUsed").text("Unable to calculate.");
