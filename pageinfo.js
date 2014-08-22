@@ -101,6 +101,9 @@ var context = {
         instance = parts[1];
     else if (parts.length == 4 && parts[1] === "my")
         instance = parts[0]+".my";
+    else if (parts.length == 4)
+        // my domain on sandbox instances
+        instance = parts[0]+"."+parts[1];
     
     if(instance === null)
         throw new Error("Unable to determine salesforce instance");
