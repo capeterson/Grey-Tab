@@ -2,7 +2,7 @@ Overview
 ========
 
 Grey Tab is a chrome extension that adds useful developer and/or support tools for working with Salesforce/Force.com applications.
-It is currently in a pre-alpha state and should be considered "experimental". 
+It is currently in a alpha state and should be considered "experimental". 
 
 Currently there are two tabs available:
  - Session Information
