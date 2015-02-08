@@ -4,6 +4,8 @@ Implements caching of describe data to prevent excessive API calls continually r
 **/
 "use strict";
 
+var log = new Logger();
+
 Object.create = function(o){
     var result = function(){};
     result.prototype = o;
