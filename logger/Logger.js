@@ -28,7 +28,7 @@ var Logger = function(){
 
         me._messages.push({
             severity: sevObject,
-            message: JSON.stringify(message), //or else reading the log would show current state, not when it was logged!
+            message: JSON.parse(JSON.stringify(message)), //an ultra-hacky clone implementation
             timestamp: new Date()
         });
     }
