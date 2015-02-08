@@ -5,18 +5,27 @@ Implements caching of describe data to prevent excessive API calls continually r
 "use strict";
 
 var log = new Logger();
+window.onerror = function(message, source, row, col, err){
+  log.addMessage("ERROR", {
+      message: message,
+      file: source,
+      row: row,
+      column: col,
+      errorObject: err
+  });
+};
 
 Object.create = function(o){
     var result = function(){};
     result.prototype = o;
     return new result();
-}
+};
 
 var OrganizationSchema = function(){
     if(!(this instanceof OrganizationSchema))
         throw Error("Constructor called as a function.");
     this.sObjectTypes = {};
-}
+};
 
 var SObjectType = function(sforceXML, connectionId){
     if(sforceXML == null || sforceXML == undefined)
@@ -195,4 +204,3 @@ setInterval(
     },
     cleanupTimer
 );
-
