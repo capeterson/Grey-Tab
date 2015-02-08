@@ -1,6 +1,6 @@
 /**
- * Finds the salesforce viewstate string, if any, base64 decodes it, and return's it's length.
- * The length returned is the blob's lenght, NOT the base64 string - which is how SFDC calculates it
+ * Finds the salesforce viewstate string, if any, base64 decodes it, and returns its length.
+ * This means the result will be blob size, not base64 string size - which is how SFDC calculates it for limit checking
  * @return {integer|null}
  */
 var calculateViewstateSize = function(){
