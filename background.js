@@ -117,7 +117,7 @@ var Connection = {
     connectionId: null, //aka sid_client
     sfconnection: null,
     globalDescribe: null,
-	fullDescribes: new Object(),
+	fullDescribes: {},
     lastUsed: Date.now(),
     fetchGlobalDescribe: function(){
         this.globalDescribe = this.sfconnection.describeGlobal();
