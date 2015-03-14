@@ -1,5 +1,5 @@
 var context;
-var record = new Object();
+var record = {};
 
 chrome.tabs.getSelected(null,function(tab)
 {
@@ -38,7 +38,7 @@ chrome.tabs.getSelected(null,function(tab)
 var getOrganizationSchema = function(){
 	var bkg = chrome.extension.getBackgroundPage();
     return bkg.cache.getConnection(context).getOrganizationSchema();
-}
+};
 
 var gatherRecordInfo = function(){
 	record.id = context.currentRecord;
@@ -57,11 +57,11 @@ var gatherRecordInfo = function(){
 		console.log("Field: ",field);
 		$('#fieldTable > tbody:last').append('<tr class="fieldInfo" id='+field.name.toLowerCase()+'><td>'+field.name+'</td><td>'+field.label+'</td><td class="record-data">'+escapeHtml(record.values[field.name])+'</td></tr>');
 	}
-}
+};
 
 var invalidateSession = function(){
 	chrome.extension.getBackgroundPage().cache.removeConnection(context);
-}
+};
 
  $(document).ready(function() {
     document.getElementById('search').addEventListener('keyup', filterFields);
@@ -121,32 +121,34 @@ var getFullRecord = function(recordId){
 	fieldSOQL = fieldSOQL.substring(0,fieldSOQL.length-2);
 	//SOQL injection ahoy! Fix this!
 	return chrome.extension.getBackgroundPage().cache.getConnection(context).sfconnection.query("select "+fieldSOQL+" from "+record.describe.name+" WHERE Id = '"+record.id+"'").records;
-}
+};
 		
 var getFields = function(typeName){
 	console.log("sending request for "+typeName);
 	var bkg = chrome.extension.getBackgroundPage();
     var fields = bkg.cache.getConnection(context).getFieldsForSObject(typeName).fields;
 	return fields;
-}
+};
+
 var getDescribeForId = function(recordId){
     console.log("sending request for "+recordId);
     var bkg = chrome.extension.getBackgroundPage();
     return bkg.cache.getConnection(context).getDescribeForId(recordId);
-}
+};
 
 var populateSessionDetails = function(){
 	console.log("populating session details",context);
     document.getElementById("sessionId").innerHTML = context.sessionId;
     document.getElementById("sfhost").innerHTML = context.sfhost;
     document.getElementById("orgId").innerHTML = context.orgId;
-}
+};
+
 var populateCRUD = function(recordId){
     var describe = getDescribeForId(recordId);
     console.log('populating data for describe');
     console.log(describe);
     $('#CRUD > tbody:last').after('<tr><td>'+describe.createable+'</td><td>'+describe.queryable+'</td><td>'+describe.updateable+'</td><td>'+describe.deletable+'</td></tr>');
-}
+};
 
 var filterFields = function(){
     var searchText = $('#search').val().toLowerCase();
@@ -155,13 +157,13 @@ var filterFields = function(){
     } else {
         applySearchFilter(searchText);
     }
-}
+};
 
 var showAll = function(){
     $('tr').each(function(){
         $(this).show();
     });
-}
+};
 
 var applySearchFilter = function(searchText){
 	$('#fieldTable tr.fieldInfo').each(function(index,el){
@@ -178,4 +180,4 @@ var applySearchFilter = function(searchText){
 			$(el).hide();
 		}
 	})
-}
+};
