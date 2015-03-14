@@ -62,7 +62,7 @@ var SObjectType = function(sforceXML, connectionId){
         for(var i = 0; i < res.fields.length; i++)
             fields.push( new SObjectField(res.fields[i]) );
         console.log('Got fields: ',res,' for ',that.name);
-    }
+    };
 
     this.getFields = function(){
         fetchFields();
@@ -77,7 +77,7 @@ var SObjectType = function(sforceXML, connectionId){
         var result = fields[fieldName.toLowerCase()];
         return result;
     };
-}
+};
 
 var SObjectField = function(sforceXML){
     if(!(this instanceof SObjectField))
