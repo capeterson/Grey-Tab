@@ -1,5 +1,6 @@
 var context;
 var record = {};
+var log = chrome.extension.getBackgroundPage().log;
 
 chrome.tabs.getSelected(null,function(tab)
 {
@@ -8,10 +9,16 @@ chrome.tabs.getSelected(null,function(tab)
         chrome.cookies.getAll({domain: context.sfhost, name: "sid"}, function(cookies){
             for(var i = 0; i < cookies.length; i++){
                 if(cookies[i].domain == context.sfhost){
-                    console.log("Setting master sessionId to ",cookies);
+                    log.addMessage("DEBUG", {
+                        event: "Setting master sessionId",
+                        value: cookies[i]
+                    });
                     context.masterSessionId = cookies[i].value;
                 }else{
-                	console.log("ignoring session cookie for mismatched host",cookies[i]);
+                	log.addMessage("DEBUG", {
+                        event: "ignoring session cookie for mismatched host: ",
+                        value: cookies[i]
+                    });
                 }
             }
         });
@@ -30,10 +37,13 @@ chrome.tabs.getSelected(null,function(tab)
 	        }
 	    }catch(ex){
 	    	$("#viewstateUsed").text("Unable to calculate.");
-	    	console.log('Calculating viewstate failed:',ex);
+	    	log.addMessage("ERROR", {
+                event: 'Calculating viewstate failed',
+                value: ex
+            });
 	    }
     });
-}); 
+});
 
 var getOrganizationSchema = function(){
 	var bkg = chrome.extension.getBackgroundPage();
