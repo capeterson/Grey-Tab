@@ -116,10 +116,14 @@ var context = {
 }());
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-	if(request.command == 'getContext') 
-	    sendResponse(context);
-	else if(request.command == 'getViewstateSize')
-	    sendResponse(calculateViewstateSize());
-	else 
-	    throw 'Unknown command ' + request.command;
+	switch(request.command){
+        case 'getContext':
+            sendResponse(context);
+            break;
+        case 'getViewstateSize':
+            sendResponse(calculateViewstateSize());
+            break;
+        default:
+            throw 'Unknown command ' + request.command;
+    }
 });
