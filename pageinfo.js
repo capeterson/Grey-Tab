@@ -11,7 +11,7 @@ var calculateViewstateSize = function(){
         result = null;
     }
     return result;
-}
+};
 
 /**
  * Get cookie value
@@ -30,13 +30,7 @@ var getCookie = function(key) {
 	}
 	//failure; no such key
 	return null;
-}
-
-/**
- * Takes any of the various forms of SFDC hostnames and spits out a "standard" format
- * @return {String}
- */
-
+};
 
 
 /**
