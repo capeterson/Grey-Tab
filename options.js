@@ -3,6 +3,8 @@
 var options = {
     connection_cleanup_age: null
 };
+var log = chrome.extension.getBackgroundPage().log;
+
 // Saves options to localStorage.
 function save_options() {
     options.connection_cleanup_age = document.getElementById("connection_cleanup_age").value;
@@ -28,4 +30,20 @@ document.addEventListener('DOMContentLoaded', function () {
     restore_options();
 });
 
-document.addEventListener('DOMContentReady', restore_options);
+function copyTextToClipboard(text) {
+    var copyFrom = $('<textarea/>');
+    copyFrom.text(text);
+    $('body').append(copyFrom);
+    copyFrom.select();
+    document.execCommand('copy');
+    copyFrom.remove();
+};
+
+$(document).ready(function(){
+    $("#copy-log").on("click", function(){
+        var messages = log.getMessages();
+        copyTextToClipboard(JSON.stringify(messages, null, '\t'));
+        alert("Got it! Note that the log will contain session ids, be sure to remove them or log out before sharing.");
+    });
+    restore_options();
+});
