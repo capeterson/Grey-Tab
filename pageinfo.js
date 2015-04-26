@@ -1,6 +1,6 @@
 /**
- * Finds the salesforce viewstate string, if any, base64 decodes it, and return's it's length.
- * The length returned is the blob's lenght, NOT the base64 string - which is how SFDC calculates it
+ * Finds the salesforce viewstate string, if any, base64 decodes it, and returns its length.
+ * This means the result will be blob size, not base64 string size - which is how SFDC calculates it for limit checking
  * @return {integer|null}
  */
 var calculateViewstateSize = function(){
@@ -11,7 +11,7 @@ var calculateViewstateSize = function(){
         result = null;
     }
     return result;
-}
+};
 
 /**
  * Get cookie value
@@ -30,13 +30,7 @@ var getCookie = function(key) {
 	}
 	//failure; no such key
 	return null;
-}
-
-/**
- * Takes any of the various forms of SFDC hostnames and spits out a "standard" format
- * @return {String}
- */
-
+};
 
 
 /**
@@ -122,10 +116,14 @@ var context = {
 }());
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-	if(request.command == 'getContext') 
-	    sendResponse(context);
-	else if(request.command == 'getViewstateSize')
-	    sendResponse(calculateViewstateSize());
-	else 
-	    throw 'Unknown command ' + request.command;
+	switch(request.command){
+        case 'getContext':
+            sendResponse(context);
+            break;
+        case 'getViewstateSize':
+            sendResponse(calculateViewstateSize());
+            break;
+        default:
+            throw 'Unknown command ' + request.command;
+    }
 });
