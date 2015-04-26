@@ -4,9 +4,8 @@ Implements caching of describe data to prevent excessive API calls continually r
 **/
 "use strict";
 
-var log = new Logger();
 window.onerror = function(message, source, row, col, err){
-  log.addMessage("ERROR", {
+  GreyTab.log.addMessage("ERROR", {
       message: message,
       file: source,
       row: row,
@@ -61,7 +60,6 @@ var SObjectType = function(sforceXML, connectionId){
         fields = [];
         for(var i = 0; i < res.fields.length; i++)
             fields.push( new SObjectField(res.fields[i]) );
-        console.log('Got fields: ',res,' for ',that.name);
     };
 
     this.getFields = function(){
@@ -152,7 +150,6 @@ var Connection = {
 			describe = this.fullDescribes[typeName];
 		}else {
 			describe = this.sfconnection.describeSObject(typeName);
-			console.log("Got describe: ",describe);
 			this.fullDescribes[typeName] = describe;
 		}
 		return describe;
@@ -171,7 +168,7 @@ var cache = {
             result.connectionId = context.sid_Client;
             this.cachedConnections[result.connectionId] = result;
             result.sfconnection = new sforce.Connection();
-            console.log("Setting up API connection with session Id "+context.masterSessionId+" to "+context.sfhost);
+            GreyTab.log.addMessage("info", "Setting up API connection with session Id "+context.masterSessionId+" to "+context.sfhost);
             result.sfconnection.init(context.masterSessionId,"https://"+context.sfhost+"/services/Soap/u/25.0");
             UserContext.getUrl = function(path){ return "https://"+context.sfhost+path; }; //hack for apex.js to work
         }else{
@@ -181,8 +178,8 @@ var cache = {
         return result;
     },
     removeConnection: function(context){
-        if(context == null || context.sessionId == null || context.sid_Client == null)
-            throw "Invalid context";
+        if(context == null || context.sessionId == null || context.sid_Client == null){}
+            throw "Invalid context: "+context.sid_Client;
         delete this.cachedConnections[context.sid_Client];
     }
 
@@ -193,11 +190,11 @@ setInterval(
     function(){
         //Clear out connections unused for x seconds
         var maxConnectionCacheAge = config.getConfig("connection_cleanup_age") * 60 * 60 * 1000; //config is hrs - need it in ms
-        console.log('Running old connection cleanup. Removing entries older than '+maxConnectionCacheAge+' miliseconds.');
+        GreyTab.log.addMessage("debug", 'Running old connection cleanup. Removing entries older than '+maxConnectionCacheAge+' miliseconds.');
         var now = Date.now();
         for(var key in cache.cachedConnections){
             if( (now - maxConnectionCacheAge) >= cache.cachedConnections[key].lastUsed){
-                console.log('removing connection '+key+'. Last used '+cache.cachedConnections[key].lastUsed);
+                GreyTab.log.addMessage("debug", 'removing connection '+key+'. Last used '+cache.cachedConnections[key].lastUsed);
                 delete cache.cachedConnections[key];
             }
         }

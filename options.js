@@ -3,7 +3,7 @@
 var options = {
     connection_cleanup_age: null
 };
-var log = chrome.extension.getBackgroundPage().log;
+var GreyTab = chrome.extension.getBackgroundPage().GreyTab;
 
 // Saves options to localStorage.
 function save_options() {
@@ -41,7 +41,7 @@ function copyTextToClipboard(text) {
 
 $(document).ready(function(){
     $("#copy-log").on("click", function(){
-        var messages = log.getMessages();
+        var messages = GreyTab.log.getMessages();
         copyTextToClipboard(JSON.stringify(messages, null, '\t'));
         alert("Got it! Note that the log will contain session ids, be sure to remove them or log out before sharing.");
     });
