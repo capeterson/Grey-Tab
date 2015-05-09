@@ -5,16 +5,16 @@
   "description": "A small but growing collection of neat tricks for debugging force.com applications.",
   "browser_action": {
     "default_icon": "icon.png",
-    "default_popup": "popup.html"
+    "default_popup": "app/pages/popup.html"
   },
-  "options_page": "options.html",
+  "options_page": "app/pages/options.html",
   "background": {
-    "page": "background.html"
+    "page": "app/pages/background.html"
   },
   "content_scripts": [
     {
       "matches": ["https://*.salesforce.com/*", "https://*.force.com/*"],
-      "js": ["pageinfo.js"]
+      "js": ["app/js/pageinfo.js"]
     }
   ],
   "permissions": [
