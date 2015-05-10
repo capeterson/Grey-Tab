@@ -14,6 +14,8 @@ window.onerror = function(message, source, row, col, err){
   });
 };
 
+GreyTab.API_VERSION = 'v33.0';
+
 Object.create = function(o){
     var result = function(){};
     result.prototype = o;
