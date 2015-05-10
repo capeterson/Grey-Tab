@@ -26,31 +26,31 @@ var OrganizationSchema = function(){
     this.sObjectTypes = {};
 };
 
-var SObjectType = function(sforceXML, connectionId){
-    if(sforceXML == null || sforceXML == undefined)
+var SObjectType = function(describeData, connectionId){
+    if(describeData == null || describeData == undefined)
         throw Error("First argument cannot be null");
     if(!(this instanceof SObjectType))
         throw Error("Constructor called as a function.");
-    this.name = sforceXML.name;
-    this.label = sforceXML.label;
-    this.labelPlural = sforceXML.label;
-    this.activateable = sforceXML.activateable;
-    this.createable = sforceXML.createable;
-    this.custom = sforceXML.custom;
-    this.customSetting = sforceXML.custom;
-    this.deletable = sforceXML.deletable;
-    this.deprecatedAndHidden = sforceXML.deprecatedAndHidden;
-    this.feedEnabled = sforceXML.feedEnabled;
-    this.keyPrefix =  sforceXML.keyPrefix;      
-    this.layoutable = sforceXML.layoutable;
-    this.mergeable = sforceXML.mergeable;
-    this.queryable = sforceXML.queryable;
-    this.replicateable = sforceXML.replicateable;
-    this.retrieveable = sforceXML.retrieveable;
-    this.searchable = sforceXML.searchable;
-    this.triggerable = sforceXML.triggerable;
-    this.undeletable = sforceXML.undeletable;
-    this.updateable = sforceXML.updateable;
+    this.name = describeData.name;
+    this.label = describeData.label;
+    this.labelPlural = describeData.label;
+    this.activateable = describeData.activateable;
+    this.createable = describeData.createable;
+    this.custom = describeData.custom;
+    this.customSetting = describeData.custom;
+    this.deletable = describeData.deletable;
+    this.deprecatedAndHidden = describeData.deprecatedAndHidden;
+    this.feedEnabled = describeData.feedEnabled;
+    this.keyPrefix =  describeData.keyPrefix;
+    this.layoutable = describeData.layoutable;
+    this.mergeable = describeData.mergeable;
+    this.queryable = describeData.queryable;
+    this.replicateable = describeData.replicateable;
+    this.retrieveable = describeData.retrieveable;
+    this.searchable = describeData.searchable;
+    this.triggerable = describeData.triggerable;
+    this.undeletable = describeData.undeletable;
+    this.updateable = describeData.updateable;
 
     var that = this;
     var fields = null;
@@ -77,38 +77,38 @@ var SObjectType = function(sforceXML, connectionId){
     };
 };
 
-var SObjectField = function(sforceXML){
+var SObjectField = function(describeData){
     if(!(this instanceof SObjectField))
         throw Error("Constructor called as a function.");
-    this.autoNumber = sforceXML.autoNumber;
-    this.byteLength = sforceXML.byteLength;
-    this.calculated = sforceXML.calculated;
-    this.calculated = sforceXML.calculated;
-    this.caseSensitive = sforceXML.caseSensitive;
-    this.createable = sforceXML.createable;
-    this.custom = sforceXML.custom;
-    this.defaultedOnCreate = sforceXML.defaultedOnCreate;
-    this.deprecatedAndHidden = sforceXML.deprecatedAndHidden;
-    this.digits = sforceXML.digits;
-    this.filterable = sforceXML.filterable;
-    this.groupable = sforceXML.groupable;
-    this.idLookup = sforceXML.idLookup;
-    this.label = sforceXML.label;
-    this.length = sforceXML.length;
-    this.name = sforceXML.name;
-    this.nameField = sforceXML.nameField;
-    this.namePointing = sforceXML.namePointing;
-    this.nillable = sforceXML.nillable;
-    this.permissionable = sforceXML.permissionable;
-    this.precision = sforceXML.precision;
-    this.restrictedPicklist = sforceXML.restrictedPicklist;
-    this.scale = sforceXML.scale;
-    this.soapType = sforceXML.soapType;
-    this.sortable = sforceXML.sortable;
-    this.type = sforceXML.type;
-    this.unique = sforceXML.unique;
-    this.updateable = sforceXML.updateable;
-}
+    this.autoNumber = describeData.autoNumber;
+    this.byteLength = describeData.byteLength;
+    this.calculated = describeData.calculated;
+    this.calculated = describeData.calculated;
+    this.caseSensitive = describeData.caseSensitive;
+    this.createable = describeData.createable;
+    this.custom = describeData.custom;
+    this.defaultedOnCreate = describeData.defaultedOnCreate;
+    this.deprecatedAndHidden = describeData.deprecatedAndHidden;
+    this.digits = describeData.digits;
+    this.filterable = describeData.filterable;
+    this.groupable = describeData.groupable;
+    this.idLookup = describeData.idLookup;
+    this.label = describeData.label;
+    this.length = describeData.length;
+    this.name = describeData.name;
+    this.nameField = describeData.nameField;
+    this.namePointing = describeData.namePointing;
+    this.nillable = describeData.nillable;
+    this.permissionable = describeData.permissionable;
+    this.precision = describeData.precision;
+    this.restrictedPicklist = describeData.restrictedPicklist;
+    this.scale = describeData.scale;
+    this.soapType = describeData.soapType;
+    this.sortable = describeData.sortable;
+    this.type = describeData.type;
+    this.unique = describeData.unique;
+    this.updateable = describeData.updateable;
+};
 
 //TODO: switch to a constructor
 var Connection = {
@@ -155,7 +155,7 @@ var Connection = {
 		return describe;
 	}
 
-}
+};
 
 var cache = {
     cachedConnections: {},
