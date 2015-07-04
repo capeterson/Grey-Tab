@@ -54,7 +54,7 @@ var SObjectType = function(sforceXML, connectionId){
 
     var that = this;
     var fields = null;
-    var connectionId = connectionId;
+
     var fetchFields = function(){
         var res = cache.cachedConnections[connectionId].getFieldsForSObject(that.name);
         fields = [];
@@ -155,7 +155,7 @@ var Connection = {
 		return describe;
 	}
 
-}
+};
 
 var cache = {
     cachedConnections: {},
