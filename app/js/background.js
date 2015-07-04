@@ -178,8 +178,9 @@ var cache = {
         return result;
     },
     removeConnection: function(context){
-        if(context == null || context.sessionId == null || context.sid_Client == null){}
-            throw "Invalid context: "+context.sid_Client;
+        if(context == null || context.sessionId == null || context.sid_Client == null) {
+            throw "Invalid context: " + context.sid_Client;
+        }
         delete this.cachedConnections[context.sid_Client];
     }
 
