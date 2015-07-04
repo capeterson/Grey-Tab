@@ -108,7 +108,7 @@ var SObjectField = function(sforceXML){
     this.type = sforceXML.type;
     this.unique = sforceXML.unique;
     this.updateable = sforceXML.updateable;
-}
+};
 
 //TODO: switch to a constructor
 var Connection = {
