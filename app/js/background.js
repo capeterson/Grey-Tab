@@ -4,7 +4,7 @@ Implements caching of describe data to prevent excessive API calls continually r
 **/
 "use strict";
 
-window.onerror = function(message, source, row, col, err){
+window.addEventListener("error", function(message, source, row, col, err){
   GreyTab.log.addMessage("ERROR", {
       message: message,
       file: source,
@@ -12,7 +12,7 @@ window.onerror = function(message, source, row, col, err){
       column: col,
       errorObject: err
   });
-};
+});
 
 Object.create = function(o){
     var result = function(){};
