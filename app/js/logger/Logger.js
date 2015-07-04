@@ -10,7 +10,7 @@ var GreyTab = window.GreyTab || {};
             while(me._messages.length >= me.sizeLimit){
                 me._messages.shift();
             }
-        }
+        };
         //when _messages is this long start truncating old _messages
         this.sizeLimit = 256;
         /**

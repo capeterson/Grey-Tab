@@ -61,11 +61,11 @@ var gatherRecordInfo = function(){
 	$("#CRUD_r").text(record.describe.retrieveable);
 	$("#CRUD_u").text(record.describe.updateable);
 	$("#CRUD_d").text(record.describe.deletable);
-	record.values = getFullRecord(record.id);
+	record.value = getFullRecord(record.id);
 	for(var i = 0; i < record.fields.length; i++){
 		var field = record.fields[i];
 		console.log("Field: ",field);
-		$('#fieldTable > tbody:last').append('<tr class="fieldInfo" id='+field.name.toLowerCase()+'><td>'+field.name+'</td><td>'+field.label+'</td><td class="record-data">'+escapeHtml(record.values[field.name])+'</td></tr>');
+		$('#fieldTable > tbody:last').append('<tr class="fieldInfo" id='+field.name.toLowerCase()+'><td>'+field.name+'</td><td>'+field.label+'</td><td class="record-data">'+escapeHtml(record.value.fields[field.name])+'</td></tr>');
 	}
 };
 
@@ -123,14 +123,31 @@ var invalidateSession = function(){
         });
 
 var getFullRecord = function(recordId){
-	var fieldSOQL = "";
+	var fieldSOQL = "",
+		fieldsPerQuery = 100,
+		sobj = new GreyTab.model.SObject(),
+		rawConnection = chrome.extension.getBackgroundPage().cache.getConnection(context).sfconnection;
 	for(var i = 0; i < record.fields.length; i++){
 		var field = record.fields[i];
 		fieldSOQL += field.name+", ";
+
+		if(i % fieldsPerQuery === 0){
+			fieldSOQL = fieldSOQL.substring(0,fieldSOQL.length-2);
+			sobj.applyFieldData(
+				rawConnection.query("select "+fieldSOQL+" from "+record.describe.name+" WHERE Id = '"+record.id+"'").records
+			);
+			fieldSOQL = ""; //reset for the next query
+		}
 	}
-	fieldSOQL = fieldSOQL.substring(0,fieldSOQL.length-2);
+	if(fieldSOQL !== ""){ //need to query the leftovers if we didn't end on a multiple of fieldsPerQuery
+		fieldSOQL = fieldSOQL.substring(0,fieldSOQL.length-2);
+		sobj.applyFieldData(
+			rawConnection.query("select "+fieldSOQL+" from "+record.describe.name+" WHERE Id = '"+record.id+"'").records
+		);
+	}
+
 	//SOQL injection ahoy! Fix this!
-	return chrome.extension.getBackgroundPage().cache.getConnection(context).sfconnection.query("select "+fieldSOQL+" from "+record.describe.name+" WHERE Id = '"+record.id+"'").records;
+	return sobj;
 };
 		
 var getFields = function(typeName){
