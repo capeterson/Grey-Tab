@@ -2,7 +2,8 @@ var GreyTab = window.GreyTab || {};
 GreyTab.model = GreyTab.model || {};
 
 GreyTab.model.SObject = function(){
-    //TODO: validate being called with new
+    if(!(this instanceof GreyTab.model.SObject))
+        throw Error("Constructor called as a function. Use the new keyword");
 
     /**
      * Since javascript has methods and data intermixed on objects we need to keep fields off the root type
