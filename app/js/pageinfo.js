@@ -4,7 +4,7 @@
  * @return {Number|null} the size of the current viewstate, in bytes. Null if no view state.
  */
 var calculateViewstateSize = function(){
-    var restult;
+    var result;
     try{
         result = atob(document.getElementById('com.salesforce.visualforce.ViewState').value).length;
     }catch(ex){
@@ -75,34 +75,44 @@ var getCurrentRecordId = function(url) {
 	}
 };
 
-var context = {
-	currentRecord : getCurrentRecordId(window.location.href),
-	sessionId     : getCookie('sid'),
-	orgId         : getCookie('sid').substring(0,15),
-	sid_Client    : getCookie('sid_Client'),
-	pod           : null,
-	sfhost        : null
-};
+/**
+ * Initialize page-level session.
+ * This is in a different javascript scope than the page's js, so the global isn't as dumb as it seems
+ */
+(function(){
+	var sessionId = getCookie('sid'),
+			sessionClient = getCookie('sid_Client');
+
+	window.context = new Map();
+	context.currentRecord = getCurrentRecordId((window.location.href));
+	context.sessionId = sessionId;
+	if(sessionId){
+		context.orgId = sessionId.substring(0,15);
+	}
+	context.sid_Client = sessionClient;
+	pod = null;
+	sfhost = null;
+})();
 
 ( function() {
     var instance = null;
     var hostname = window.location.host;
     //modified from http://stackoverflow.com/a/9722468/740787
     var parts = hostname.split("\.");
-    if (parts.length == 3) 
+    if (parts.length == 3)
         instance = parts[0];
-    else if (parts.length == 5) 
+    else if (parts.length == 5)
         instance = parts[1];
     else if (parts.length == 4 && parts[1] === "my")
         instance = parts[0]+".my";
     else if (parts.length == 4)
         // my domain on sandbox instances
         instance = parts[0]+"."+parts[1];
-    
+
     if(instance === null)
         throw new Error("Unable to determine salesforce instance");
     context.pod = instance;
-    
+
     var isVf = hostname.indexOf(".visual.force.com") > 0;
     if(parts[0].indexOf("--") > 0 && isVf){ //using my domain & this is sandbox or managed vf page
         var subparts = parts[0].split("--");
@@ -112,7 +122,7 @@ var context = {
     }else{
         context.sfhost = context.pod + ".salesforce.com";
     }
-    
+
 }());
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
