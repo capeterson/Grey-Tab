@@ -4,7 +4,7 @@ Implements caching of describe data to prevent excessive API calls continually r
 **/
 "use strict";
 
-window.onerror = function(message, source, row, col, err){
+window.addEventListener("error", function(message, source, row, col, err){
   GreyTab.log.addMessage("ERROR", {
       message: message,
       file: source,
@@ -12,7 +12,7 @@ window.onerror = function(message, source, row, col, err){
       column: col,
       errorObject: err
   });
-};
+});
 
 Object.create = function(o){
     var result = function(){};
@@ -54,7 +54,7 @@ var SObjectType = function(sforceXML, connectionId){
 
     var that = this;
     var fields = null;
-    var connectionId = connectionId;
+
     var fetchFields = function(){
         var res = cache.cachedConnections[connectionId].getFieldsForSObject(that.name);
         fields = [];
@@ -108,7 +108,7 @@ var SObjectField = function(sforceXML){
     this.type = sforceXML.type;
     this.unique = sforceXML.unique;
     this.updateable = sforceXML.updateable;
-}
+};
 
 //TODO: switch to a constructor
 var Connection = {
@@ -155,7 +155,7 @@ var Connection = {
 		return describe;
 	}
 
-}
+};
 
 var cache = {
     cachedConnections: {},
@@ -178,8 +178,9 @@ var cache = {
         return result;
     },
     removeConnection: function(context){
-        if(context == null || context.sessionId == null || context.sid_Client == null){}
-            throw "Invalid context: "+context.sid_Client;
+        if(context == null || context.sessionId == null || context.sid_Client == null) {
+            throw "Invalid context: " + context.sid_Client;
+        }
         delete this.cachedConnections[context.sid_Client];
     }
 

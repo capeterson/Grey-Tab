@@ -10,4 +10,4 @@ var config = {
 			configValue = this.defaults[configName];
 		return configValue;
 	}
-}
+};
