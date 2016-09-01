@@ -18,51 +18,84 @@
 				<li><a href="#tab-record">Record Details</a></li>
 			</ul>
 			<div id="tab-session">
-				<div class="minwidth xscroll">
-					<ul>
-						<li>
-							Org Id: <span id="orgId">UNDEFINED</span>
-						</li>
-						<li>
-							Host: <span id="sfhost">UNDEFINED</span>
-						</li>
-						<li>
-							SessionId: <span id="sessionId">UNDEFINED</span>
-						</li>
-						<li id="viewstate">
-							Viewstate use: <span id="viewstateUsed">UNDEFINED</span>
-						</li>
-					</ul>   
-				</div>            
+				<div class="xscroll">
+					<table>
+						<tr>
+							<th>Org Id</th>
+							<td><span id="orgId">UNDEFINED</span></td>
+						</tr>
+						<tr>
+							<th>Host</th>
+							<td><span id="sfhost">UNDEFINED</span></td>
+						</tr>
+						<tr>
+							<th>SessionId</th>
+							<td><span id="sessionId">UNDEFINED</span></td>
+						</tr>
+						<tr id="viewstate">
+							<th>Viewstate use</th>
+							<td><span id="viewstateUsed">UNDEFINED</span></td>
+						</tr>
+					</table>
+				</div>
 			</div>
 			<div id="tab-record">
-				Field Search: <input id="search"/>
-				<ul>
-					<li>
-						Currently viewing record: <span id="currentRecordId">UNDEFINED</span>
-					</li>
-					<li>
-						<span class="infotip" title="Also known as the API Name">SObject Name</span>: <span id="sobject_name">UNDEFINED</span>
-					</li>
-					<li>
-						SObject Label: <span id="sobject_label">UNDEFINED</span>
-					</li>
-					<li>
-						CRUD Permissions
-						<ul>
-							<li>Creatable: <span id="CRUD_c"></span></li>
-							<li>Readable: <span id="CRUD_r"></span></li>
-							<li>Updateable: <span id="CRUD_u"></span></li>
-							<li>Deletable: <span id="CRUD_d"><span></li>
-						</ul>
-					</li>
-				</ul>
-				<table id="fieldTable" border="1" style="width:100%">
+				<table class="record-details">
+					<tr>
+						<td class="left">
+							<table>
+								<tr>
+									<td colspan="2">Currently viewing record</td>
+								</tr>
+								<tr>
+									<th>Record Id</th>
+									<td id="currentRecordId">UNDEFINED</td>
+								</tr>
+								<tr>
+									<th title="Also known as the API Name">SObject Name</th>
+									<td id="sobject_name">UNDEFINED</td>
+								</tr>
+								<tr>
+									<th>SObject Label</th>
+									<td id="sobject_label">UNDEFINED</td>
+								</tr>
+							</table>
+						</td>
+						<td class="right">
+							<table>
+								<tr>
+									<td colspan="2">CRUD Permissions</td>
+								</tr>
+								<tr>
+									<th>Creatable</th>
+									<td id="CRUD_c"></td>
+								</tr>
+								<tr>
+									<th>Readable</th>
+									<td id="CRUD_r"></td>
+								</tr>
+								<tr>
+									<th>Updateable</th>
+									<td id="CRUD_u"></td>
+								</tr>
+								<tr>
+									<th>Deletable</th>
+									<td id="CRUD_d"></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+
+				<div class="search-form">
+					Field Search: <input id="search" placeholder="Search..." />
+				</div>
+				<table id="fieldTable">
                     <thead>
                         <tr>
-                            <td><span class="infotip" title="Also known as the API Name">Field Name</span></td>
-                            <td>Field Label</td>
-                            <td>Field Value</td>
+                            <th title="Also known as the API Name">Field Name</th>
+                            <th>Field Label</th>
+                            <th>Field Value</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,6 +107,9 @@
 	</div>
 	<div id="dialog" class="dialog-confirm">
 	    <p id="dialog-message"></p>
+	</div>
+	<div class="loading" style="display:none">
+		<div class="loader"></div>
 	</div>
   </body>
 </html>

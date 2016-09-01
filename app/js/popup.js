@@ -62,11 +62,18 @@ var gatherRecordInfo = function(){
 	$("#CRUD_u").text(record.describe.updateable);
 	$("#CRUD_d").text(record.describe.deletable);
 	record.value = getFullRecord(record.id);
+	var allFields = '';
 	for(var i = 0; i < record.fields.length; i++){
 		var field = record.fields[i];
 		console.log("Field: ",field);
-		$('#fieldTable > tbody:last').append('<tr class="fieldInfo" id='+field.name.toLowerCase()+'><td>'+field.name+'</td><td>'+field.label+'</td><td class="record-data">'+escapeHtml(record.value.fields[field.name])+'</td></tr>');
+		allFields +=
+			'<tr class="fieldInfo" id='+field.name.toLowerCase()+'>' +
+			'    <td>'+field.name+'</td>' +
+			'    <td>'+field.label+'</td>' +
+			'    <td class="record-data">'+escapeHtml(record.value.fields[field.name])+'</td>' +
+			'</tr>';
 	}
+	$('#fieldTable > tbody:last').append(allFields);
 };
 
 var invalidateSession = function(){
@@ -75,52 +82,70 @@ var invalidateSession = function(){
 
  $(document).ready(function() {
     document.getElementById('search').addEventListener('keyup', filterFields);
-            $(function() {
-		        $( "#tabs" ).tabs();
-				$( "#tabs" ).bind(
-					"tabsselect",function(event,ui){ 
-						if(ui.tab.hash === "#tab-record"){
-							if(context.currentRecord == null){
-							    $("#dialog-message").text("No record Id found in the current page's URL.");
-							    $("#dialog").dialog({
-							        title:  "No record Id found",
-							        resizable: false,
-							        modal: true,
-							        buttons: {
-							            Ok: function(){
-							                $(this).dialog("close");    
-							            }
-							        } 
-							    });
-							    return false;
-							}else{
-							    try{
-							    	gatherRecordInfo();
-							    }catch(ex){
-							    	if(ex.faultcode == "sf:INVALID_SESSION_ID"){
-							    		invalidateSession();
-							    		$("#dialog-message").text("Your salesforce session is invalid. Please reload the page and try again.");
-							    	}else{
-							    		$("#dialog-message").text("An error occured trying to load record details: "+ex.exceptionMessage);
-							    	}
-							    	$("#dialog").dialog({
-							    		title: 	"Error",
-							    		resizable: false,
-							    		modal: 	true,
-							    		buttons: {
-							    			Ok: function(){
-							    				$(this).dialog("close");
-							    			}
-							    		}	
-							    	});
-							    	return false;
-							    }
-							}
-						}
-					}
-				);
-    	    });
-        });
+	$(function() {
+		$( "#tabs" ).tabs();
+		$( "#tabs" ).bind(
+			"tabsselect",function(event,ui){
+				if(ui.tab.hash === "#tab-record"){
+					showLoading();
+					setTimeout(function () {
+						startGathering();
+						hideLoading();
+					}, 0);
+				}
+			}
+		);
+	});
+});
+
+var startGathering = function () {
+	var isError = false;
+
+	if(undefined === context){
+		showError("Context are not loaded.");
+		isError = true;
+	} else {
+		if (undefined === context.currentRecord || null === context.currentRecord) {
+			showError("No record Id found in the current page's URL.");
+			isError = true;
+		}
+	}
+
+	if (!isError) {
+		try {
+			gatherRecordInfo();
+		} catch (ex) {
+			isError = true;
+			if (ex.faultcode == "sf:INVALID_SESSION_ID") {
+				invalidateSession();
+				showError("Your salesforce session is invalid. Please reload the page and try again.");
+			} else {
+				showError("An error occured trying to load record details: " + ex.exceptionMessage);
+			}
+		}
+	}
+};
+
+var showLoading = function(){
+	$('.loading').show();
+};
+var hideLoading = function(){
+	$('.loading').hide();
+};
+
+var showError = function (errorMessage) {
+	$("#dialog-message").text(errorMessage);
+	$("#dialog").dialog({
+		title:  "Error",
+		resizable: false,
+		modal: true,
+		buttons: {
+			Ok: function(){
+				$(this).dialog("close");
+			}
+		}
+	});
+};
 
 var getFullRecord = function(recordId){
 	var fieldSOQL = "",
