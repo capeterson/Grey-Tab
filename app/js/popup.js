@@ -70,6 +70,7 @@ var gatherRecordInfo = function(){
 			'<tr class="fieldInfo" id='+field.name.toLowerCase()+'>' +
 			'    <td>'+field.label+'</td>' +
 			'    <td>'+field.name+'</td>' +
+			'    <td>'+field.type+'</td>' +
 			'    <td class="record-data">'+escapeHtml(record.value.fields[field.name])+'</td>' +
 			'</tr>';
 	}
