@@ -65,13 +65,21 @@ var gatherRecordInfo = function(){
 	var allFields = '';
 	for(var i = 0; i < record.fields.length; i++){
 		var field = record.fields[i];
-		console.log("Field: ",field);
+		var fieldValue = record.value.fields[field.name];
+
+		var fieldValueClasses = [];
+		fieldValueClasses.push('record-data');
+		fieldValueClasses.push(field.type);
+		if (null === fieldValue) {
+			fieldValueClasses.push('value-null');
+		}
+
 		allFields +=
 			'<tr class="fieldInfo" id='+field.name.toLowerCase()+'>' +
 			'    <td>'+field.label+'</td>' +
 			'    <td>'+field.name+'</td>' +
 			'    <td>'+field.type+'</td>' +
-			'    <td class="record-data">'+escapeHtml(record.value.fields[field.name])+'</td>' +
+			'    <td class="' + fieldValueClasses.join(' ') + '">' + escapeHtml(fieldValue) + '</td>' +
 			'</tr>';
 	}
 	$('#fieldTable > tbody:last').append(allFields);
