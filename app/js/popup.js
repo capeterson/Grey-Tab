@@ -1,5 +1,6 @@
 var context;
 var record = {};
+var gatheringWasDone = false;
 var GreyTab = chrome.extension.getBackgroundPage().GreyTab;
 
 chrome.tabs.getSelected(null,function(tab)
@@ -96,11 +97,14 @@ var invalidateSession = function(){
 		$( "#tabs" ).bind(
 			"tabsselect",function(event,ui){
 				if(ui.tab.hash === "#tab-record"){
-					showLoading();
-					setTimeout(function () {
-						startGathering();
-						hideLoading();
-					}, 0);
+					if (true !== gatheringWasDone) {
+						showLoading();
+						setTimeout(function () {
+							startGathering();
+							hideLoading();
+							gatheringWasDone = true;
+						}, 0);
+					}
 				}
 			}
 		);
