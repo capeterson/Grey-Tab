@@ -47,6 +47,11 @@ table th {
     width: 100%;
 }
 
+#fieldTable > tbody > tr:hover > td,
+#fieldTable > tbody > tr:hover > th {
+    background: #e3f3ff;
+}
+
 .record-data.value-null {
     color: #aaaaaa;
     font-style: italic;
