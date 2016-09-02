@@ -70,9 +70,9 @@ var gatherRecordInfo = function(){
 
 		var fieldValueClasses = [];
 		fieldValueClasses.push('record-data');
-		fieldValueClasses.push(field.type);
+		fieldValueClasses.push('field-type--' + field.type);
 		if (null === fieldValue) {
-			fieldValueClasses.push('value-null');
+			fieldValueClasses.push('field-value--null');
 		}
 
 		allFields +=

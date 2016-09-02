@@ -52,7 +52,7 @@ table th {
     background: #e3f3ff;
 }
 
-.record-data.value-null {
+.record-data.field-value--null {
     color: #aaaaaa;
     font-style: italic;
 }
