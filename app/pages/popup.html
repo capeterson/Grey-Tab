@@ -5,6 +5,7 @@
     <!-- JavaScript and HTML must be in separate files for security. -->
     <link type="text/css" href="../styles/popup.css" rel="Stylesheet"/>
     <link type="text/css" href="../../lib/jquery/css/smoothness/jquery-ui.css" rel="Stylesheet" />
+	<script src="../../lib/sforce/connection.js"></script>
     <script src="../../lib/jquery/js/jquery.js"></script>
     <script src="../../lib/jquery/js/jquery-ui.js"></script>
     <script src="../../shared/escape.js"></script>
@@ -90,12 +91,12 @@
 				<div class="search-form">
 					Field Search: <input id="search" placeholder="Search..." />
 				</div>
-				<table id="fieldTable">
+				<table id="fieldTable" class="table-resizable">
                     <thead>
                         <tr>
-							<th>Field Label</th>
-                            <th>API Name</th>
-                            <th>Type</th>
+							<th class="th-resizable" width="25%">Field Label<span class="resizecolumn"></span></th>
+                            <th class="th-resizable" width="25%">API Name<span class="resizecolumn"></span></th>
+                            <th class="th-resizable" width="15%">Type<span class="resizecolumn"></span></th>
                             <th>Value</th>
                         </tr>
                     </thead>
@@ -103,6 +104,10 @@
                     
                     </tbody>
                 </table>
+				<div class="command-panel">
+					<button class="command-save">Save Record</button>
+					<button class="command-undo">Undo All</button>
+				</div>
 			</div>
 		</div>
 	</div>

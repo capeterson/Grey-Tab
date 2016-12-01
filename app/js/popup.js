@@ -1,14 +1,14 @@
 var context;
 var record = {};
+var recordEditedValues = {};
 var gatheringWasDone = false;
 var GreyTab = chrome.extension.getBackgroundPage().GreyTab;
 
-chrome.tabs.getSelected(null,function(tab)
-{
+chrome.tabs.getSelected(null,function(tab) {
     chrome.tabs.sendRequest(tab.id,{command: "getContext"}, function(response){
         context = response;
-        chrome.cookies.getAll({domain: context.sfhost, name: "sid"}, function(cookies){
-            for(var i = 0; i < cookies.length; i++){
+        chrome.cookies.getAll({domain: context.sfhost, name: "sid"}, function(cookies) {
+            for (var i = 0; i < cookies.length; i++) {
                 if(cookies[i].domain == context.sfhost){
                     GreyTab.log.addMessage("DEBUG", {
                         event: "Setting master sessionId",
@@ -25,7 +25,7 @@ chrome.tabs.getSelected(null,function(tab)
         });
         populateSessionDetails();
     });
-    chrome.tabs.sendRequest(tab.id,{command: "getViewstateSize"}, function(response){
+    chrome.tabs.sendRequest(tab.id,{command: "getViewstateSize"}, function(response) {
         try{
         	if(response === null){
         		$("#viewstate").hide();
@@ -55,35 +55,50 @@ var gatherRecordInfo = function(){
 	record.id = context.currentRecord;
 	record.describe = getDescribeForId(record.id);
 	record.fields = getFields(record.describe.name);
-	$("#currentRecordId").text(context.currentRecord);
+
+	$("#currentRecordId").text(record.id);
 	$("#sobject_name").text(record.describe.name);
 	$("#sobject_label").text(record.describe.label);
+
 	$("#CRUD_c").text(record.describe.createable);
 	$("#CRUD_r").text(record.describe.retrieveable);
 	$("#CRUD_u").text(record.describe.updateable);
 	$("#CRUD_d").text(record.describe.deletable);
-	record.value = getFullRecord(record.id);
+	record.value = getFullRecord(record.describe.name, record.id);
 	var allFields = '';
 	for(var i = 0; i < record.fields.length; i++){
 		var field = record.fields[i];
 		var fieldValue = record.value.fields[field.name];
 
 		var fieldValueClasses = [];
-		fieldValueClasses.push('record-data');
 		fieldValueClasses.push('field-type--' + field.type);
 		if (null === fieldValue) {
 			fieldValueClasses.push('field-value--null');
 		}
 
 		allFields +=
-			'<tr class="fieldInfo" id='+field.name.toLowerCase()+'>' +
-			'    <td>'+field.label+'</td>' +
-			'    <td>'+field.name+'</td>' +
-			'    <td>'+field.type+'</td>' +
-			'    <td class="' + fieldValueClasses.join(' ') + '">' + escapeHtml(fieldValue) + '</td>' +
+			'<tr class="fieldInfo" data-field-api-name="' + field.name + '" id="'+field.name.toLowerCase()+'">' +
+			'    <td class="td-resizable">'+field.label+'</td>' +
+			'    <td class="td-resizable">'+field.name+'</td>' +
+			'    <td class="td-resizable">'+field.type+'</td>' +
+			'    <td class="td-resizable record-data ' + fieldValueClasses.join(' ') + '">' +
+            '       <div class="field-value-wrapper">' +
+			'           <span class="value">' + escapeHtml(fieldValue) + '</span>' +
+            '           <div class="editor">' +
+            '               <textarea rows="1" type="text" class="new-value"/>' +
+            '               <label><input type="checkbox" class="new-value-is-null"/>NULL</label>' +
+            '               <button class="button-save">Save</button>' +
+            '               <button class="button-cancel">Undo</button>' +
+            '           </div>' +
+			'           <span class="button-edit" title="Edit the value">&#9998;</span>' +
+			'           <span class="button-reset" title="Undo">&#8634;</span>' +
+            '       </div>' +
+			'    </td>' +
 			'</tr>';
 	}
+    $('#fieldTable > tbody:last').html('');
 	$('#fieldTable > tbody:last').append(allFields);
+    showHideComandPanel();
 };
 
 var invalidateSession = function(){
@@ -103,12 +118,118 @@ var invalidateSession = function(){
 							startGathering();
 							hideLoading();
 							gatheringWasDone = true;
-						}, 0);
+						}, 10);
 					}
 				}
 			}
 		);
 	});
+});
+
+$(document).ready(function () {
+    var handleEdit = function () {
+        var $fieldTr = getClosestFieldTr(this);
+        if ($fieldTr.length) {
+            var fieldApiName = $fieldTr.attr('data-field-api-name');
+            startInlineEditing(fieldApiName);
+        }
+    };
+
+    var save = function () {
+        var $fieldTr = getClosestFieldTr(this);
+        var fieldApiname = getFieldApiNameBy$Tr($fieldTr);
+
+        saveInlineEditing(fieldApiname);
+        return false;
+    };
+
+    var cancel = function () {
+        var $fieldTr = getClosestFieldTr(this);
+        var fieldApiname = getFieldApiNameBy$Tr($fieldTr);
+
+        cancelInlineEditing(fieldApiname);
+        return false;
+    };
+
+    var $fieldTable = $('#fieldTable');
+    $fieldTable.on('dblclick', 'tr.fieldInfo', handleEdit);
+    $fieldTable.on('click', '.button-edit', handleEdit);
+
+    $fieldTable.on('click', '.button-save', save);
+    $fieldTable.on('click', '.button-cancel', cancel);
+    $fieldTable.on('click', '.button-reset', cancel);
+
+    $fieldTable.on('change', '.new-value-is-null', function () {
+        var $fieldTr = getClosestFieldTr(this);
+        var $input = $fieldTr.find('.editor .new-value');
+        var isChecked = $(this).is(':checked');
+        $input.prop("disabled", isChecked);
+    });
+
+    $('.command-undo').click(function () {
+        $('tr.fieldInfo.edited').each(function () {
+            var fieldApiName = getFieldApiNameBy$Tr($(this));
+            cancelInlineEditing(fieldApiName);
+        });
+    });
+
+    $('.command-save').click(function () {
+        var newRecord = new sforce.Xml();
+
+        newRecord.Id = record.value.fields['Id'];
+        newRecord.type = record.value.fields['type'];
+
+        $.each(recordEditedValues, function(field, value) {
+            newRecord[field] = value;
+        });
+
+        var rawConnection = chrome.extension.getBackgroundPage().cache.getConnection(context).sfconnection;
+        rawConnection.update([newRecord], onUpdate);
+
+        function onUpdate(result) {
+            if (result && result[0]) {
+                result = result[0];
+
+                if (result.success == 'true') {
+                    showLoading();
+                    setTimeout(function () {
+                        startGathering();
+                        hideLoading();
+                        gatheringWasDone = true;
+                    }, 10);
+                } else {
+                    if (result.errors) {
+                        var error = result.errors;
+                        showError(error.statusCode + ': ' + error.message);
+                    } else {
+                        showError('An error occurred!');
+                    }
+                }
+            }
+        }
+    });
+
+    (function() {
+        var pressed = false;
+        var $column = undefined;
+        var startX, startWidth;
+
+        $(".table-resizable .th-resizable .resizecolumn").mousedown(function (e) {
+            pressed = true;
+            startX = e.pageX;
+            $column = $(this).parent();
+            startWidth = $column.width();
+        });
+
+        $(document).mousemove(function (e) {
+            if (pressed) {
+                $column.width(startWidth + (e.pageX - startX));
+            }
+        }).mouseup(function() {
+            pressed = false;
+        });
+    })();
+
 });
 
 var startGathering = function () {
@@ -160,34 +281,137 @@ var showError = function (errorMessage) {
 	});
 };
 
-var getFullRecord = function(recordId){
-	var fieldSOQL = "",
-		fieldsPerQuery = 100,
-		sobj = new GreyTab.model.SObject(),
-		rawConnection = chrome.extension.getBackgroundPage().cache.getConnection(context).sfconnection;
-	for(var i = 0; i < record.fields.length; i++){
-		var field = record.fields[i];
-		fieldSOQL += field.name+", ";
-
-		if(i % fieldsPerQuery === 0){
-			fieldSOQL = fieldSOQL.substring(0,fieldSOQL.length-2);
-			sobj.applyFieldData(
-				rawConnection.query("select "+fieldSOQL+" from "+record.describe.name+" WHERE Id = '"+record.id+"'").records
-			);
-			fieldSOQL = ""; //reset for the next query
-		}
-	}
-	if(fieldSOQL !== ""){ //need to query the leftovers if we didn't end on a multiple of fieldsPerQuery
-		fieldSOQL = fieldSOQL.substring(0,fieldSOQL.length-2);
-		sobj.applyFieldData(
-			rawConnection.query("select "+fieldSOQL+" from "+record.describe.name+" WHERE Id = '"+record.id+"'").records
-		);
-	}
-
-	//SOQL injection ahoy! Fix this!
-	return sobj;
+var isShowedInlineEditor = function($fieldTr) {
+    return $fieldTr.hasClass('editing');
 };
-		
+var showInlineEditor = function($fieldTr, fieldValue) {
+    var fieldValueIsNull = (null === fieldValue);
+
+    if (fieldValueIsNull) {
+        fieldValue = '';
+    }
+
+    $fieldTr.find('.editor .new-value-is-null').prop('checked', fieldValueIsNull).change();
+    $fieldTr.find('.editor .new-value').val(fieldValue).change();
+
+    $fieldTr.addClass('editing');
+    $fieldTr.find('.editor .new-value').focus();
+};
+var getValueFromInlineEditor = function($fieldTr) {
+    var fieldValue = $fieldTr.find('.editor .new-value').val();
+    var fieldValueIsNull = ($fieldTr.find('.editor .new-value-is-null:checked').length !== 0);
+
+    if (fieldValueIsNull || '' == fieldValue) {
+        fieldValue = null;
+    }
+
+    return fieldValue;
+};
+
+var hideInlineEditor = function($fieldTr) {
+    $fieldTr.removeClass('editing');
+};
+
+var startInlineEditing = function (fieldApiName) {
+    if('Id' !== fieldApiName) {
+        var $fieldTr = getFieldTrByApiName(fieldApiName);
+        if (!isShowedInlineEditor($fieldTr)) {
+            var fieldValue = record.value.fields[fieldApiName];
+            var newFieldValue = recordEditedValues[fieldApiName];
+            if (undefined !== newFieldValue) {
+                fieldValue = newFieldValue;
+            }
+            showInlineEditor($fieldTr, fieldValue);
+        }
+    }
+};
+
+var saveInlineEditing = function (fieldApiName) {
+    var $fieldTr = getFieldTrByApiName(fieldApiName);
+    var oldfieldValue = record.value.fields[fieldApiName];
+    var newFieldValue = getValueFromInlineEditor($fieldTr);
+
+    if (oldfieldValue !== newFieldValue) {
+        recordEditedValues[fieldApiName] = newFieldValue;
+        changeValueInTable(fieldApiName, newFieldValue);
+        $fieldTr.addClass('edited');
+    }
+
+    hideInlineEditor($fieldTr);
+    showHideComandPanel();
+};
+
+var cancelInlineEditing = function (fieldApiName) {
+    var $fieldTr = getFieldTrByApiName(fieldApiName);
+    var fieldValue = record.value.fields[fieldApiName];
+    recordEditedValues[fieldApiName] = undefined;
+    changeValueInTable(fieldApiName, fieldValue);
+    $fieldTr.removeClass('edited');
+
+    hideInlineEditor($fieldTr);
+    showHideComandPanel();
+};
+
+
+var getClosestFieldTr = function(elem) {
+    return $(elem).closest('tr.fieldInfo');
+};
+var getFieldTrByApiName = function(fieldApiName) {
+    return $('.fieldInfo[data-field-api-name="' + fieldApiName + '"]');
+};
+var getFieldApiNameBy$Tr = function($fieldTr) {
+    return $fieldTr.attr('data-field-api-name');
+};
+var changeValueInTable = function (filedApiName, fieldValue) {
+    var $fieldTr = getFieldTrByApiName(filedApiName);
+    var $fieldValueTd = $fieldTr.find('td.record-data');
+    var $fieldValue = $fieldValueTd.find('.value');
+
+    if (null === fieldValue) {
+        $fieldValueTd.addClass('field-value--null');
+    } else {
+        $fieldValueTd.removeClass('field-value--null');
+    }
+
+    $fieldValue.html( escapeHtml(fieldValue) );
+};
+
+var showHideComandPanel = function () {
+    if ($('tr.fieldInfo.edited').length) {
+        $('#tab-record').addClass('changed');
+    } else {
+        $('#tab-record').removeClass('changed');
+    }
+};
+
+var getFullRecord = function(objectName, recordId){
+    var fieldsPerQuery = 200;
+    var sobj = new GreyTab.model.SObject();
+    var rawConnection = chrome.extension.getBackgroundPage().cache.getConnection(context).sfconnection;
+
+    var fieldsArr = [];
+    for(var i = 0; i < record.fields.length; i++){
+        if (i % fieldsPerQuery === 0) {
+            fieldsArr.push([]);
+        }
+        if ('Id' !== record.fields[i].name) {
+            fieldsArr[fieldsArr.length - 1].push(record.fields[i].name);
+        }
+    }
+
+    fieldsArr.forEach(function (subArr) {
+       if(subArr.length) {
+           var fieldSOQL = subArr.join(',');
+           sobj.applyFieldData(
+               rawConnection.query("SELECT Id, " + fieldSOQL + " FROM " + objectName + " WHERE Id = '" + recordId + "'").records
+           );
+       }
+    });
+
+    //SOQL injection ahoy! Fix this!
+    return sobj;
+};
+
 var getFields = function(typeName){
 	console.log("sending request for "+typeName);
 	var bkg = chrome.extension.getBackgroundPage();

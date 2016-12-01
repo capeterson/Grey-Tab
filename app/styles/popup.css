@@ -1,5 +1,5 @@
 html {
-    width: 740px;
+    min-width: 740px;
 }
 
 body {
@@ -46,17 +46,127 @@ table th {
 .record-details table {
     width: 100%;
 }
+.field-value-wrapper {
+    position: relative;
+    width: calc(100% - 15px);
+}
+.field-value-wrapper .button-reset ,
+.field-value-wrapper .button-edit {
+    position:absolute;
+    font-size: 1.1em;
+    cursor: pointer;
+    top: -2px;
+    right: -15px;
+    display: none;
+}
+#fieldTable > tbody > tr.fieldInfo:hover:not(.edited) .field-value-wrapper .button-edit {
+    display: block;
+}
+#fieldTable > tbody > tr.fieldInfo.edited .button-edit {
+    display: none;
+}
+#fieldTable > tbody > tr.fieldInfo.edited .button-reset {
+    display: block;
+}
+tr.fieldInfo.editing .button-reset,
+tr.fieldInfo.editing .button-edit,
+tr.fieldInfo.editing .value {
+    display: none !important;
+}
+tr.fieldInfo[data-field-api-name="Id"] .button-edit {
+    display: none !important;
+}
 
 #fieldTable > tbody > tr:hover > td,
 #fieldTable > tbody > tr:hover > th {
     background: #e3f3ff;
 }
 
-.record-data.field-value--null {
+.record-data.field-value--null .value {
     color: #aaaaaa;
     font-style: italic;
 }
 
+tr.fieldInfo.edited .value {
+    color: #ff6a00;
+    font-weight: 700;
+}
+
+tr.fieldInfo.editing .editor {
+    display: block;
+}
+
+tr.fieldInfo.editing .field-value-wrapper {
+    width: 100%;
+}
+
+.editor {
+    display: none;
+}
+.editor .button-save,
+.editor .button-cancel{
+    float: right;
+    font-size: 0.8em;
+    font-weight: 700;
+    margin: 3px 0 0 3px;
+}
+.editor .button-cancel{
+    font-weight: 100;
+}
+.editor .new-value-is-null{
+    vertical-align: -2px;
+    margin: 6px 3px 0 0;
+}
+.editor .new-value{
+    resize:vertical;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.command-panel {
+    position: fixed;
+    bottom: 0;
+    left: 35%;
+    right: 35%;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 10px 10px 0 0;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-bottom: 0;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    z-index: 10;
+    display: none;
+}
+#tab-record.changed .command-panel {
+    display: block;
+}
+.command-panel button{
+    margin: 5px 2px;
+    color: #333;
+    background-color: #fff;
+    display: inline-block;
+    padding: 4px 8px;
+    font-weight: 100;
+    line-height: 1.42857143;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 0 none;
+    border-radius: 4px;
+}
+.command-panel button:hover{
+    color: #333;
+    background-color: #e6e6e6;
+}
+.command-panel button.command-save{
+    color: #fff;
+    background-color: #337ab7;
+}
+.command-panel button.command-save:hover{
+    color: #fff;
+    background-color: #286090;
+}
 .search-form {
     margin: 15px 0 5px 0;
     text-align: center;
@@ -126,4 +236,36 @@ table th {
     40% {
         box-shadow: 0 2.5em 0 0;
     }
+}
+
+.table-resizable {
+    overflow: hidden;
+}
+
+.table-resizable .th-resizable {
+    position: relative;
+}
+
+.table-resizable .th-resizable,
+.table-resizable .td-resizable {
+    word-break: break-all;
+}
+
+.table-resizable .th-resizable .resizecolumn{
+    position: absolute;
+    display: block;
+    height: 10000px;
+    width: 9px;
+    right: -5px;
+    top: 0;
+    z-index: 1;
+    cursor: col-resize;
+}
+
+.table-resizable .th-resizable .resizecolumn:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+.table-resizable .th-resizable .resizecolumn:active {
+    background: rgba(0,0,0,0.4);
 }
