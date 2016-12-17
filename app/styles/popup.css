@@ -3,8 +3,35 @@ html {
 }
 
 body {
-    padding: 10px;
+    padding: 0;
     margin: 0;
+}
+
+#tabs.ui-tabs {
+    border: 0 none;
+}
+#tabs.ui-tabs .ui-tabs-panel {
+    padding: 1em 1em 0.5em 1em;
+}
+
+#tabs.ui-tabs .close-tab {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    border-radius: 3px;
+    line-height: 9px;
+    padding: 0 2px 2px 2px;
+    font-size: 10px;
+    cursor: pointer;
+    color: #333;
+}
+#tabs.ui-tabs .close-tab:hover {
+    background: #e00;
+    color: #fff;
+}
+#tabs.ui-tabs .close-tab:active {
+    background: #f00;
+    color: #fff;
 }
 
 table {
@@ -13,13 +40,11 @@ table {
     border: 1px solid #CCC;
     border-collapse: collapse;
 }
-
 table th,
 table td {
     padding: 4px 5px;
     border: 1px solid #D4DADC;
 }
-
 table th {
     background: #f2f3f3;
 }
@@ -28,8 +53,11 @@ table th {
     word-break: break-all;
 }
 
-.record-details {
+.record-details,
+.record-details .left,
+.record-details .right{
     border: 0 none;
+    padding:0;
 }
 .record-details .left,
 .record-details .right {
@@ -43,9 +71,14 @@ table th {
 .record-details .right {
     padding-left: 5px;
 }
+.record-details .record-details-title {
+    text-align: center;
+    padding-bottom: 0.3em;
+}
 .record-details table {
     width: 100%;
 }
+
 .field-value-wrapper {
     position: relative;
     width: calc(100% - 15px);
@@ -59,14 +92,19 @@ table th {
     right: -15px;
     display: none;
 }
-#fieldTable > tbody > tr.fieldInfo:hover:not(.edited) .field-value-wrapper .button-edit {
+
+.fieldTable > tbody > tr.fieldInfo:hover:not(.edited) .field-value-wrapper .button-edit {
     display: block;
 }
-#fieldTable > tbody > tr.fieldInfo.edited .button-edit {
+.fieldTable > tbody > tr.fieldInfo.edited .button-edit {
     display: none;
 }
-#fieldTable > tbody > tr.fieldInfo.edited .button-reset {
+.fieldTable > tbody > tr.fieldInfo.edited .button-reset {
     display: block;
+}
+.fieldTable > tbody > tr:hover > td,
+.fieldTable > tbody > tr:hover > th {
+    background: #e3f3ff;
 }
 tr.fieldInfo.editing .button-reset,
 tr.fieldInfo.editing .button-edit,
@@ -75,16 +113,6 @@ tr.fieldInfo.editing .value {
 }
 tr.fieldInfo[data-field-api-name="Id"] .button-edit {
     display: none !important;
-}
-
-#fieldTable > tbody > tr:hover > td,
-#fieldTable > tbody > tr:hover > th {
-    background: #e3f3ff;
-}
-
-.record-data.field-value--null .value {
-    color: #aaaaaa;
-    font-style: italic;
 }
 
 tr.fieldInfo.edited .value {
@@ -98,6 +126,11 @@ tr.fieldInfo.editing .editor {
 
 tr.fieldInfo.editing .field-value-wrapper {
     width: 100%;
+}
+
+.record-data.field-value--null .value {
+    color: #aaaaaa;
+    font-style: italic;
 }
 
 .editor {
@@ -123,6 +156,9 @@ tr.fieldInfo.editing .field-value-wrapper {
     box-sizing: border-box;
 }
 
+.record.changed .command-panel {
+    display: block;
+}
 .command-panel {
     position: fixed;
     bottom: 0;
@@ -137,9 +173,6 @@ tr.fieldInfo.editing .field-value-wrapper {
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     z-index: 10;
     display: none;
-}
-#tab-record.changed .command-panel {
-    display: block;
 }
 .command-panel button{
     margin: 5px 2px;
@@ -167,6 +200,7 @@ tr.fieldInfo.editing .field-value-wrapper {
     color: #fff;
     background-color: #286090;
 }
+
 .search-form {
     margin: 15px 0 5px 0;
     text-align: center;
@@ -268,4 +302,9 @@ tr.fieldInfo.editing .field-value-wrapper {
 
 .table-resizable .th-resizable .resizecolumn:active {
     background: rgba(0,0,0,0.4);
+}
+
+form[name=open-record] {
+    padding: 20px;
+    text-align: center;
 }

@@ -17,6 +17,7 @@
 			<ul>
 				<li><a href="#tab-session">Session Information</a></li>
 				<li><a href="#tab-record">Record Details</a></li>
+                <li><a href="#open-record" title="Open Record"><b>+</b></a></li>
 			</ul>
 			<div id="tab-session">
 				<div class="xscroll">
@@ -40,75 +41,13 @@
 					</table>
 				</div>
 			</div>
-			<div id="tab-record">
-				<table class="record-details">
-					<tr>
-						<td class="left">
-							<table>
-								<tr>
-									<td colspan="2">Currently viewing record</td>
-								</tr>
-								<tr>
-									<th>Record Id</th>
-									<td id="currentRecordId">UNDEFINED</td>
-								</tr>
-								<tr>
-									<th title="Also known as the API Name">SObject Name</th>
-									<td id="sobject_name">UNDEFINED</td>
-								</tr>
-								<tr>
-									<th>SObject Label</th>
-									<td id="sobject_label">UNDEFINED</td>
-								</tr>
-							</table>
-						</td>
-						<td class="right">
-							<table>
-								<tr>
-									<td colspan="2">CRUD Permissions</td>
-								</tr>
-								<tr>
-									<th>Creatable</th>
-									<td id="CRUD_c"></td>
-								</tr>
-								<tr>
-									<th>Readable</th>
-									<td id="CRUD_r"></td>
-								</tr>
-								<tr>
-									<th>Updateable</th>
-									<td id="CRUD_u"></td>
-								</tr>
-								<tr>
-									<th>Deletable</th>
-									<td id="CRUD_d"></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-
-				<div class="search-form">
-					Field Search: <input id="search" placeholder="Search..." />
-				</div>
-				<table id="fieldTable" class="table-resizable">
-                    <thead>
-                        <tr>
-							<th class="th-resizable" width="25%">Field Label<span class="resizecolumn"></span></th>
-                            <th class="th-resizable" width="25%">API Name<span class="resizecolumn"></span></th>
-                            <th class="th-resizable" width="15%">Type<span class="resizecolumn"></span></th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    
-                    </tbody>
-                </table>
-				<div class="command-panel">
-					<button class="command-save">Save Record</button>
-					<button class="command-undo">Undo All</button>
-				</div>
-			</div>
+            <div id="open-record">
+                <form name="open-record">
+                    <label for="record-id">Record Id:</label>
+                    <input type="text" placeholder="Id" name="record-id" id="record-id" required/>
+                    <input type="submit" value="Open" />
+                </form>
+            </div>
 		</div>
 	</div>
 	<div id="dialog" class="dialog-confirm">

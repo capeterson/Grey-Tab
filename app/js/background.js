@@ -33,11 +33,9 @@ var SObjectType = function(sforceXML, connectionId){
         throw Error("Constructor called as a function.");
     this.name = sforceXML.name;
     this.label = sforceXML.label;
-    this.labelPlural = sforceXML.label;
     this.activateable = sforceXML.activateable;
     this.createable = sforceXML.createable;
     this.custom = sforceXML.custom;
-    this.customSetting = sforceXML.custom;
     this.deletable = sforceXML.deletable;
     this.deprecatedAndHidden = sforceXML.deprecatedAndHidden;
     this.feedEnabled = sforceXML.feedEnabled;
@@ -135,12 +133,14 @@ var Connection = {
     getDescribeForId: function(recordId){
         if(this.globalDescribe == null)
             this.fetchGlobalDescribe();
-        var result;
+        var keyPrefix = recordId.substring(0,3);
+        var result = undefined;
         for(var i = 0; i < this.globalDescribe.sobjects.length; i++){
             var describe = this.globalDescribe.sobjects[i];
-            if(describe.keyPrefix == recordId.substring(0,3))
+            if(describe.keyPrefix == keyPrefix)
                 result = describe;
         }
+        if (result === undefined) { throw "Can't find Object by Id prefix " + keyPrefix; }
         return result;
     },
 	getFieldsForSObject: function(typeName){
