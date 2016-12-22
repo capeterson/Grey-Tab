@@ -5,6 +5,7 @@
     <!-- JavaScript and HTML must be in separate files for security. -->
     <link type="text/css" href="../styles/popup.css" rel="Stylesheet"/>
     <link type="text/css" href="../../lib/jquery/css/smoothness/jquery-ui.css" rel="Stylesheet" />
+	<script src="../../lib/sforce/connection.js"></script>
     <script src="../../lib/jquery/js/jquery.js"></script>
     <script src="../../lib/jquery/js/jquery-ui.js"></script>
     <script src="../../shared/escape.js"></script>
@@ -16,64 +17,44 @@
 			<ul>
 				<li><a href="#tab-session">Session Information</a></li>
 				<li><a href="#tab-record">Record Details</a></li>
+                <li><a href="#open-record" title="Open Record"><b>+</b></a></li>
 			</ul>
 			<div id="tab-session">
-				<div class="minwidth xscroll">
-					<ul>
-						<li>
-							Org Id: <span id="orgId">UNDEFINED</span>
-						</li>
-						<li>
-							Host: <span id="sfhost">UNDEFINED</span>
-						</li>
-						<li>
-							SessionId: <span id="sessionId">UNDEFINED</span>
-						</li>
-						<li id="viewstate">
-							Viewstate use: <span id="viewstateUsed">UNDEFINED</span>
-						</li>
-					</ul>   
-				</div>            
+				<div class="xscroll">
+					<table>
+						<tr>
+							<th>Org Id</th>
+							<td><span id="orgId">UNDEFINED</span></td>
+						</tr>
+						<tr>
+							<th>Host</th>
+							<td><span id="sfhost">UNDEFINED</span></td>
+						</tr>
+						<tr>
+							<th>SessionId</th>
+							<td><span id="sessionId">UNDEFINED</span></td>
+						</tr>
+						<tr id="viewstate">
+							<th>Viewstate use</th>
+							<td><span id="viewstateUsed">UNDEFINED</span></td>
+						</tr>
+					</table>
+				</div>
 			</div>
-			<div id="tab-record">
-				Field Search: <input id="search"/>
-				<ul>
-					<li>
-						Currently viewing record: <span id="currentRecordId">UNDEFINED</span>
-					</li>
-					<li>
-						<span class="infotip" title="Also known as the API Name">SObject Name</span>: <span id="sobject_name">UNDEFINED</span>
-					</li>
-					<li>
-						SObject Label: <span id="sobject_label">UNDEFINED</span>
-					</li>
-					<li>
-						CRUD Permissions
-						<ul>
-							<li>Creatable: <span id="CRUD_c"></span></li>
-							<li>Readable: <span id="CRUD_r"></span></li>
-							<li>Updateable: <span id="CRUD_u"></span></li>
-							<li>Deletable: <span id="CRUD_d"><span></li>
-						</ul>
-					</li>
-				</ul>
-				<table id="fieldTable" border="1" style="width:100%">
-                    <thead>
-                        <tr>
-                            <td><span class="infotip" title="Also known as the API Name">Field Name</span></td>
-                            <td>Field Label</td>
-                            <td>Field Value</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    
-                    </tbody>
-                </table>
-			</div>
+            <div id="open-record">
+                <form name="open-record">
+                    <label for="record-id">Record Id:</label>
+                    <input type="text" placeholder="Id" name="record-id" id="record-id" required/>
+                    <input type="submit" value="Open" />
+                </form>
+            </div>
 		</div>
 	</div>
 	<div id="dialog" class="dialog-confirm">
 	    <p id="dialog-message"></p>
+	</div>
+	<div class="loading" style="display:none">
+		<div class="loader"></div>
 	</div>
   </body>
 </html>
