@@ -106,7 +106,7 @@ $(document).ready(function() {
 
      $('form[name=open-record]').submit(function(e){
          var $input = $(this).find('input[name=record-id]');
-         var recordId = $input.val();
+         var recordId = $input.val().trim();
          $input.val('');
          openRecord(recordId);
          e.preventDefault();
