@@ -93,6 +93,15 @@ table th {
     display: none;
 }
 
+.field-value.open-in-greytab {
+    color: #0000EE;
+    text-decoration: underline;
+}
+.field-value.open-in-greytab:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+
 .fieldTable > tbody > tr.fieldInfo:hover:not(.edited) .field-value-wrapper .button-edit {
     display: block;
 }

@@ -147,6 +147,10 @@ $(document).ready(function() {
     $(document).on('click', '.fieldTable .button-cancel', cancel);
     $(document).on('click', '.fieldTable .button-reset', cancel);
 
+    $(document).on('click', '.fieldTable .open-in-greytab', function () {
+        openRecord($(this).text().trim());
+    });
+
     $(document).on('change', '.fieldTable .new-value-is-null', function () {
         var $fieldTr = getClosestFieldTr(this);
         var $input = $fieldTr.find('.editor .new-value');
@@ -521,6 +525,12 @@ var displayRecord = function ($tab, record) {
         $tr.find('.field-name').text(field.name);
         $tr.find('.field-type').text(field.type);
         $tr.find('.field-value').text(fieldValue);
+
+        if (field.type == 'reference' && fieldValue !== null) {
+            $tr.find('.field-value')
+                    .addClass('open-in-greytab')
+                    .attr('title', 'Open in Grey-Tab');
+        }
 
         $tab.find('.fieldTable > tbody:last').append($tr);
     }
