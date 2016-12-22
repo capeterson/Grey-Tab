@@ -147,7 +147,7 @@ $(document).ready(function() {
     $(document).on('click', '.fieldTable .button-cancel', cancel);
     $(document).on('click', '.fieldTable .button-reset', cancel);
 
-    $(document).on('click', '.fieldTable .open-in-greytab', function () {
+    $(document).on('click', '.fieldTable .open-in-grey-tab', function () {
         openRecord($(this).text().trim());
     });
 
@@ -528,8 +528,8 @@ var displayRecord = function ($tab, record) {
 
         if (field.type == 'reference' && fieldValue !== null) {
             $tr.find('.field-value')
-                    .addClass('open-in-greytab')
-                    .attr('title', 'Open in Grey-Tab');
+                    .addClass('open-in-grey-tab')
+                    .attr('title', 'Open in Grey Tab');
         }
 
         $tab.find('.fieldTable > tbody:last').append($tr);
