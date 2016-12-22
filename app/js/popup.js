@@ -435,11 +435,10 @@ var showAll = function($tab){
 };
 
 var applySearchFilter = function($tab, searchText){
-    console.log(searchText);
     $tab.find('.fieldTable tr.fieldInfo').each(function(index,el){
 		var matchedTerm = false;
 		for(var i = 0; i < el.children.length; i++){
-			if(el.children[i].textContent.toLowerCase().indexOf(searchText.toLowerCase()) !== -1){
+			if($(el.children[i]).find('.searchable').text().toLowerCase().indexOf(searchText.toLowerCase()) !== -1){
 				matchedTerm = true;
 				break;
 			}
@@ -449,7 +448,7 @@ var applySearchFilter = function($tab, searchText){
 		}else{
 			$(el).hide();
 		}
-	})
+	});
 };
 
 
@@ -603,12 +602,12 @@ var TEMPLATES = {
         </div>`,
     fieldTr : `
             <tr class="fieldInfo">
-			    <td class="td-resizable field-label"></td>
-			    <td class="td-resizable field-name"></td>
-			    <td class="td-resizable field-type"></td>
+			    <td class="td-resizable field-label searchable"></td>
+			    <td class="td-resizable field-name searchable"></td>
+			    <td class="td-resizable field-type searchable"></td>
 			    <td class="td-resizable record-data">
                    <div class="field-value-wrapper">
-			           <span class="value field-value"></span>
+			           <span class="value field-value searchable"></span>
                        <div class="editor">
                            <textarea rows="1" class="new-value"/>
                            <label><input type="checkbox" class="new-value-is-null"/>NULL</label>
