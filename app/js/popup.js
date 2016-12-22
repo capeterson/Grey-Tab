@@ -54,12 +54,13 @@ var gatherRecordInfo = function(recordId, callback){
     showLoading();
     setTimeout(function () {
         var record = {};
-        record.id = recordId;
+        record.Id = recordId;
 
         try {
-            record.describe = getDescribeForId(record.id);
+            record.describe = getDescribeForId(record.Id);
             record.fields = getFields(record);
             record.value = getFullRecord(record);
+            record.name = getRecordName(record);
         } catch (ex) {
             if (ex.faultcode == "sf:INVALID_SESSION_ID") {
                 invalidateSession();
@@ -390,12 +391,24 @@ var getFullRecord = function(record){
        if(subArr.length) {
            var fieldSOQL = subArr.join(',');
            sobj.applyFieldData(
-               rawConnection.query("SELECT Id, " + fieldSOQL + " FROM " + record.describe.name + " WHERE Id = '" + soqlEscapeString(record.id) + "'").records
+               rawConnection.query("SELECT Id, " + fieldSOQL + " FROM " + record.describe.name + " WHERE Id = '" + soqlEscapeString(record.Id) + "'").records
            );
        }
     });
 
     return sobj;
+};
+
+var getRecordName = function(record){
+    var nameField = undefined;
+    for (var i = 0; i < record.fields.length; i++) {
+        if (record.fields[i].nameField == "true") {
+            nameField = record.fields[i].name;
+        }
+    }
+    if (nameField !== undefined) {
+        return record.value.fields[nameField];
+    }
 };
 
 var soqlEscapeString = function(unescapedString) {
@@ -475,12 +488,16 @@ var openRecord = function(recordId) {
     gatherRecordInfo(recordId, function (record) {
         records[recordTabId] = record;
         recordEditedValues[recordTabId] = {};
+        if (record.name) {
+            $tabLink.find('.title').text(record.name);
+        }
         displayRecord($tab, record);
     });
 };
 
 var refreshRecord = function(recordTabId) {
     var $tab = $('#' + recordTabId);
+    var $tabLink = $('a[href=#' + recordTabId + ']').closest('li');
     if ($tab.length) {
         var recordId = $tab.attr('data-record-id');
 
@@ -490,6 +507,9 @@ var refreshRecord = function(recordTabId) {
         gatherRecordInfo(recordId, function (record) {
             records[recordTabId] = record;
             recordEditedValues[recordTabId] = {};
+            if (record.name) {
+                $tabLink.find('.title').text(record.name);
+            }
             displayRecord($tab, record);
         });
     }
@@ -498,7 +518,7 @@ var refreshRecord = function(recordTabId) {
 var displayRecord = function ($tab, record) {
     var $recordDetails  = $tab.find('.record-details');
 
-    $recordDetails.find(".recordId").text(record.id);
+    $recordDetails.find(".recordId").text(record.Id);
     $recordDetails.find(".sobject_name").text(record.describe.name);
     $recordDetails.find(".sobject_label").text(record.describe.label);
 
