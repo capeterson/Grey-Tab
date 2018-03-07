@@ -63,15 +63,18 @@ var getCurrentRecordId = function(url) {
 	}
 
 	var match;
-	if (match = url.match(/\.com\/\w{15}|\.com\/\w{18}/)) {
+	if (match = url.match(/\.com\/(\w{18}|\w{15})/)) {
 		//success; captured id from salesforce.com/000xxxxxxxxxxxxXXX)
-		return match[0].substr(5);
-	} else if (match = url.match(/id\=\w{15}|id\=\w{18}/)) {
+		return match[1];
+	} else if (match = url.match(/id\=(\w{18}|\w{15})/)) {
 		//success; captured id from salesforce.com/id=000xxxxxxxxxxxxXXX
-		return match[0].substr(3);
-    } else if (match = url.match(/sObject\/\w{15}|sObject\/\w{18}/)) {
+		return match[1];
+    } else if (match = url.match(/\/sObject\/(\w{18}|\w{15})/)) {
         //success; captured id from lightning.force.com/one/one.app?source=aloha#/sObject/000xxxxxxxxxxxxXXX
-        return match[0].substr(8)
+        return match[1];
+    } else if (match = url.match(/\/lightning\/r\/\w*\/(\w{18}|\w{15})/)) {
+        //success; captured id from https://<lightning.domain.com>/lightning/r/SObjectName/000xxxxxxxxxxxxXXX
+        return match[1];
 	} else {
 		//failure; not on a page with an id
 		return null;
