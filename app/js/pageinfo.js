@@ -69,6 +69,9 @@ var getCurrentRecordId = function(url) {
 	} else if (match = url.match(/id\=\w{15}|id\=\w{18}/)) {
 		//success; captured id from salesforce.com/id=000xxxxxxxxxxxxXXX
 		return match[0].substr(3);
+    } else if (match = url.match(/sObject\/\w{15}|sObject\/\w{18}/)) {
+        //success; captured id from lightning.force.com/one/one.app?source=aloha#/sObject/000xxxxxxxxxxxxXXX
+        return match[0].substr(8)
 	} else {
 		//failure; not on a page with an id
 		return null;
